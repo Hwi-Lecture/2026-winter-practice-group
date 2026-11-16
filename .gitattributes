@@ -1,3 +1,2 @@
-* text=auto
-*.bat text eol=crlf
-*.xlsx *.docx *.pptx *.pdf *.zip *.jpg *.png binary
+# 실습 파일 원본 그대로 보존 (줄바꿈 자동 변환 안 함)
+* -text
