@@ -1,6 +1,6 @@
 # 2026 겨울 실습 파일 모음
 
-교안: https://app.notion.com/p/2026-2027-41ab39501c388088b84fd13add6e038f
+교안: https://claude.ai/artifact/A3Hqd8i2d32VfSDpnSDz6q
 
 풍덕천학당 교안에서 사용하는 실습 파일 모음입니다.
 
