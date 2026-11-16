@@ -1,0 +1,4 @@
+anthropic
+streamlit>=1.63
+openpyxl
+brotli>=1.2

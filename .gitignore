@@ -1,0 +1,32 @@
+# ===== 비밀 정보 (API 키) =====
+.env
+.env.*
+!.env.example
+.streamlit/secrets.toml
+
+# ===== 수업 중 생성되는 로컬 데이터 (채팅/수강생 데이터) =====
+.local-data/
+
+# ===== 빌드 산출물 / 배포 설정 =====
+dist/
+site.tar.gz
+.openai/
+
+# ===== Node =====
+node_modules/
+npm-debug.log*
+
+# ===== Python =====
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# ===== 에디터 / OS =====
+.vscode/
+.idea/
+.DS_Store
+desktop.ini
+
+# 참고: 1. 에이전트실습/1. 파일정리 안의 Thumbs.db, ~$*.xlsx, *.tmp, *.crdownload 는
+# '파일정리 실습'용 의도된 더미 파일이므로 일부러 무시하지 않습니다.

@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>관리자 · 나를 닮은 챗봇</title>
+<style>
+:root{--bg:#f6f5f1;--panel:#fff;--ink:#1f1d1a;--sub:#6b665e;--line:#e4e0d6;--warn:#a23b2a;--ok:#2f6f73}
+@media (prefers-color-scheme:dark){:root{--bg:#161513;--panel:#201e1b;--ink:#efece6;--sub:#a29c90;--line:#35322d;--warn:#ef8b7a;--ok:#6bb5b9}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Pretendard","Noto Sans KR",sans-serif;font-size:15px;line-height:1.6}
+button,input{font:inherit;color:inherit}
+.wrap{max-width:560px;margin:0 auto;padding:24px 16px}
+h1{font-size:18px;margin:0 0 16px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:20px;margin-bottom:14px}
+label{display:block;font-size:13px;color:var(--sub);margin:12px 0 4px}
+input{width:100%;border:1px solid var(--line);background:var(--bg);border-radius:10px;padding:10px 12px}
+.btn{border:1px solid var(--line);background:var(--panel);border-radius:10px;padding:10px 16px;cursor:pointer}
+.btn.primary{background:var(--ink);color:var(--bg);border-color:var(--ink);font-weight:600}
+.btn.danger{color:var(--warn);border-color:var(--warn)}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.stat{border:1px solid var(--line);border-radius:12px;padding:12px;text-align:center}
+.stat b{display:block;font-size:26px}
+.stat span{font-size:12.5px;color:var(--sub)}
+.row{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+.msg{font-size:13.5px;margin-top:10px;min-height:1.3em;color:var(--sub)}
+.msg.err{color:var(--warn)}.msg.ok{color:var(--ok)}
+.pill{display:inline-block;font-size:12px;padding:2px 10px;border-radius:999px;border:1px solid var(--line);color:var(--sub)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>관리자</h1>
+  <div id="panel">
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+        <b id="roomName"></b><span class="pill" id="state"></span>
+      </div>
+      <div class="stats">
+        <div class="stat"><b id="nSub">0</b><span>제출한 사람</span></div>
+        <div class="stat"><b id="nAsg">0</b><span>배분 완료</span></div>
+        <div class="stat"><b id="nNote">0</b><span>소감 제출</span></div>
+      </div>
+      <div class="row">
+        <button class="btn primary" id="dist">메모리 섞어서 배분하기</button>
+        <button class="btn" id="refresh">새로고침</button>
+        <button class="btn" id="seed" style="display:none">테스트 참가자 10명 추가</button>
+      </div>
+      <p class="msg" id="help">제출한 사람이 2명 이상일 때 배분할 수 있어요. 배분한 뒤 늦게 제출한 사람은 제출하는 즉시 자동으로 배정돼요. 자기 자신의 메모리는 받지 않아요.</p>
+      <div class="msg" id="msg"></div>
+    </div>
+    <div class="card"><b>참가자 대화와 메모리</b><div class="row"><button class="btn" id="peopleRefresh">목록 새로고침</button></div><div id="people"></div></div>
+    <div class="card">
+      <b>수업 종료 후 정리</b>
+      <p class="msg" style="margin-top:4px">이 수업 코드에 저장된 메모리, 배정, 소감을 모두 삭제해요. 되돌릴 수 없어요.</p>
+      <div class="row"><button class="btn danger" id="purge">데이터 전체 삭제</button></div>
+    </div>
+  </div>
+</div>
+<script>
+const $ = (id) => document.getElementById(id);
+let room = "class", pw = "", timer = null, purgeArmed = false;
+
+async function call(action) {
+  const r = await fetch("/api/admin", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ room, password: pw, action }) });
+  let d = {};
+  try { d = await r.json(); } catch (e) {}
+  if (!r.ok) throw new Error(d.error || "오류 " + r.status);
+  return d;
+}
+function paint(d) {
+  $("nSub").textContent = d.submitted;
+  $("nAsg").textContent = d.assigned;
+  $("nNote").textContent = d.notes;
+  $("state").textContent = d.distributed ? "배분됨" : "배분 전";
+  $("dist").textContent = d.distributed ? "남은 사람 추가 배분하기" : "메모리 섞어서 배분하기";
+}
+async function load() {
+  try { paint(await call("stats")); } catch (e) { $("msg").className = "msg err"; $("msg").textContent = e.message; }
+}
+$("roomName").textContent = "현재 수업";
+load(); loadPeople(); timer = setInterval(load, 5000);
+$("refresh").onclick = load;
+async function loadPeople(){try{const d=await call("participants"),box=$("people");box.replaceChildren();for(const p of d.people){const details=document.createElement("details"),summary=document.createElement("summary"),pre=document.createElement("pre");summary.textContent=p.nick+" · "+p.messages.filter(m=>m.role==="user").length+"회 대화";pre.style.whiteSpace="pre-wrap";pre.style.wordBreak="break-word";pre.textContent="[메모리]\n"+p.memory+"\n\n[대화]\n"+(p.messages.length?p.messages.map(m=>(m.role==="user"?"참가자: ":"챗봇: ")+m.content).join("\n"):"저장된 대화 없음");details.append(summary,pre);box.append(details);}if(!d.people.length)box.textContent="아직 제출한 사람이 없어요.";}catch(e){$("people").textContent=e.message;}}
+$("peopleRefresh").onclick=loadPeople;
+$("seed").onclick=async()=>{try{const d=await call("seed");paint(d);loadPeople();$("msg").textContent=d.created+"명의 테스트 참가자를 추가했어요.";}catch(e){$("msg").textContent=e.message;}};
+if(location.hostname==="localhost"||location.hostname==="127.0.0.1")$("seed").style.display="inline-block";
+$("dist").onclick = async () => {
+  $("msg").className = "msg"; $("msg").textContent = "";
+  try {
+    const d = await call("distribute");
+    paint(d);
+    $("msg").className = "msg ok";
+    $("msg").textContent = d.newlyAssigned ? d.newlyAssigned + "명에게 배분했어요." : "새로 배분할 사람이 없어요.";
+  } catch (e) { $("msg").className = "msg err"; $("msg").textContent = e.message; }
+};
+$("purge").onclick = async () => {
+  if (!purgeArmed) {
+    purgeArmed = true; $("purge").textContent = "정말 삭제하려면 한 번 더 누르세요";
+    setTimeout(() => { purgeArmed = false; $("purge").textContent = "데이터 전체 삭제"; }, 5000);
+    return;
+  }
+  purgeArmed = false; $("purge").textContent = "데이터 전체 삭제";
+  try {
+    const d = await call("purge"); paint(d);
+    $("msg").className = "msg ok"; $("msg").textContent = d.deleted + "개 항목을 삭제했어요.";
+  } catch (e) { $("msg").className = "msg err"; $("msg").textContent = e.message; }
+};
+</script>
+</body>
+</html>

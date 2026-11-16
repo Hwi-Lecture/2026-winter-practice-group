@@ -1,0 +1,10 @@
+{
+  "name": "persona-lab-sites",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "node scripts/dev-server.mjs",
+    "build": "node scripts/build-site.mjs",
+    "validate": "node scripts/validate-artifact.mjs"
+  }
+}

@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>나를 닮은 챗봇</title>
+<style>
+:root{
+  --bg:#f6f5f1;--panel:#fff;--ink:#1f1d1a;--sub:#6b665e;--line:#e4e0d6;
+  --a:#c4552d;--a-soft:#fbeee8;--b:#2f6f73;--b-soft:#e6f2f2;--warn:#a23b2a;
+}
+@media (prefers-color-scheme:dark){
+  :root{--bg:#161513;--panel:#201e1b;--ink:#efece6;--sub:#a29c90;--line:#35322d;
+  --a:#e8805a;--a-soft:#3a2219;--b:#6bb5b9;--b-soft:#17302f;--warn:#ef8b7a;}
+}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%}
+body{background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Pretendard","Noto Sans KR",sans-serif;font-size:15px;line-height:1.6}
+button,input,textarea,select{font:inherit;color:inherit}
+.app{max-width:1040px;margin:0 auto;padding:16px;min-height:100vh;display:flex;flex-direction:column}
+header{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:14px}
+h1{font-size:18px;margin:0}
+.steps{display:flex;gap:6px;flex-wrap:wrap}
+.step{font-size:12.5px;padding:4px 12px;border-radius:999px;border:1px solid var(--line);color:var(--sub);background:var(--panel)}
+.step.on{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.step.done{color:var(--ink)}
+.view{display:none;flex:1;min-height:0}
+.view.on{display:flex}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:22px}
+.center{margin:auto;width:100%;max-width:460px}
+.center h2{margin:0 0 6px;font-size:20px}
+.sub{color:var(--sub);font-size:13.5px}
+label{display:block;font-size:13px;color:var(--sub);margin:14px 0 4px}
+input,textarea,select{width:100%;border:1px solid var(--line);background:var(--bg);border-radius:10px;padding:10px 12px}
+textarea{resize:vertical}
+.btn{border:1px solid var(--line);background:var(--panel);border-radius:10px;padding:9px 16px;cursor:pointer;font-size:14px}
+.btn:hover{background:var(--bg)}
+.btn.primary{background:var(--ink);color:var(--bg);border-color:var(--ink);font-weight:600}
+.btn.a{background:var(--a);color:#fff;border-color:var(--a);font-weight:600}
+.btn.b{background:var(--b);color:#fff;border-color:var(--b);font-weight:600}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.wide{width:100%;margin-top:18px;padding:12px}
+.err{color:var(--warn);font-size:13.5px;margin-top:10px;min-height:1.2em}
+.layout{display:flex;gap:12px;width:100%;min-height:0}
+.col{background:var(--panel);border:1px solid var(--line);border-radius:16px;display:flex;flex-direction:column;min-height:0;min-width:0}
+.chat{flex:1.5;height:calc(100vh - 120px);min-height:420px}
+.side{flex:1;padding:18px;overflow:auto}
+.col h3{margin:0;padding:12px 16px;border-bottom:1px solid var(--line);font-size:13px;color:var(--sub);font-weight:600;display:flex;justify-content:space-between;align-items:center;gap:8px}
+.msgs{flex:1;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:10px}
+.msg{max-width:85%;padding:9px 13px;border-radius:14px;white-space:pre-wrap;word-break:break-word}
+.msg.user{align-self:flex-end;background:var(--ink);color:var(--bg);border-bottom-right-radius:4px}
+.msg.bot{align-self:flex-start;background:var(--bg);border:1px solid var(--line);border-bottom-left-radius:4px}
+.msg.pending{color:var(--sub)}
+.composer{display:flex;gap:8px;padding:10px;border-top:1px solid var(--line)}
+.composer textarea{flex:1;resize:none;height:44px;max-height:120px}
+.send{border:0;border-radius:10px;padding:0 18px;color:#fff;font-weight:600;cursor:pointer}
+.send.a{background:var(--a)}.send.b{background:var(--b)}
+.send:disabled{opacity:.45;cursor:not-allowed}
+.chip{font-size:11.5px;padding:2px 9px;border-radius:999px;background:var(--a-soft);color:var(--a);font-weight:600}
+.chip.b{background:var(--b-soft);color:var(--b)}
+.hint{font-size:13px;color:var(--sub);margin:8px 0 0}
+.spinner{display:inline-block;width:14px;height:14px;border:2px solid var(--line);border-top-color:var(--ink);border-radius:50%;animation:sp 0.8s linear infinite;vertical-align:-2px;margin-right:8px}
+@keyframes sp{to{transform:rotate(360deg)}}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.45);display:none;align-items:center;justify-content:center;padding:16px;z-index:10}
+.modal.on{display:flex}
+.modal .card{width:100%;max-width:640px;max-height:90vh;overflow:auto}
+.modal textarea{height:300px;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:13px}
+.row{display:flex;gap:8px;justify-content:flex-end;margin-top:14px;flex-wrap:wrap}
+.result{flex-direction:column;gap:14px;width:100%}
+.block{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:18px 20px}
+.block h2{font-size:15px;margin:0 0 4px}
+.block .sub{margin:0 0 12px}
+.memdoc h4{margin:14px 0 4px;font-size:14px}
+.memdoc h3{margin:0 0 6px;font-size:16px}
+.memdoc p{margin:2px 0}
+.memdoc ul{margin:2px 0;padding-left:20px}
+.note{border:1px solid var(--line);border-radius:12px;padding:12px 14px;margin-top:10px;background:var(--bg)}
+.note b{font-size:12.5px;color:var(--sub);display:block;margin-bottom:2px}
+.note p{margin:2px 0 8px;white-space:pre-wrap}
+details summary{cursor:pointer;color:var(--sub);font-size:13.5px}
+@media (max-width:760px){
+  .layout{flex-direction:column}
+  .chat{height:70vh}
+}
+</style>
+</head>
+<body>
+<div class="app">
+  <header>
+    <h1>나를 닮은 챗봇</h1>
+    <div class="steps" id="steps">
+      <span class="step" data-s="collect">1 대화하기</span>
+      <span class="step" data-s="wait">2 제출</span>
+      <span class="step" data-s="persona">3 다른 사람과 이야기하기</span>
+      <span class="step" data-s="result">4 결과 보기</span>
+    </div>
+  </header>
+
+  <section class="view" id="v-entry">
+    <div class="card center">
+      <h2>시작하기</h2>
+      <p class="sub">챗봇과 편하게 이야기하면, 챗봇이 내 말투와 성격을 기록해요. 그 기록을 바탕으로 만들어진 챗봇이 다른 사람과 대화하게 됩니다.</p>
+      <label for="nick">닉네임 (선택)</label>
+      <input id="nick" maxlength="20" placeholder="다른 사람에게 보일 이름. 비워도 돼요" autocomplete="off">
+      <p class="hint">AI 연결은 강사가 설정한 서버 키를 사용해요. 개인 API 키를 입력할 필요가 없습니다.</p>
+      <label for="model">모델</label>
+      <select id="model">
+        <option value="claude-sonnet-5-5">Claude Sonnet 5.5 (기본)</option>
+        <option value="claude-haiku-5-5">Claude Haiku 5.5 (빠르고 저렴)</option>
+        <option value="claude-opus-5-5">Claude Opus 5.5</option>
+      </select>
+      <button class="btn primary wide" id="start">대화 시작</button>
+      <div class="err" id="entryErr"></div>
+    </div>
+  </section>
+
+  <section class="view" id="v-collect">
+    <div class="layout">
+      <div class="col chat">
+        <h3><span>챗봇과 대화하기</span><span class="chip" id="memChip">기록 중</span></h3>
+        <div class="msgs" id="msgs-c"></div>
+        <div class="composer">
+          <textarea id="in-c" placeholder="편하게 이야기해 보세요" rows="1"></textarea>
+          <button class="send a" id="send-c">보내기</button>
+        </div>
+      </div>
+      <div class="col side">
+        <h3 style="padding:0 0 12px;border:0">안내</h3>
+        <p class="sub" style="margin-top:0">평소 말하는 대로 편하게 이야기해 보세요. 대화하는 동안 챗봇이 말투와 성격을 기록해요.</p>
+        <p class="sub">실명, 회사 이름, 연락처, 건강이나 가족 이야기 같은 개인 정보는 말하지 않는 게 좋아요.</p>
+        <p class="sub">안내가 나오면 제출하기를 눌러 주세요.</p>
+        <button class="btn wide" id="resetChat" type="button">대화 초기화</button>
+        <button class="btn primary wide" id="submit" disabled>제출하기</button>
+        <p class="hint" id="submitHint">3번 이상 주고받으면 제출할 수 있어요.</p>
+        <div class="err" id="err-c"></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="view" id="v-wait">
+    <div class="card center" style="text-align:center">
+      <h2>제출했어요</h2>
+      <p class="sub" id="waitText"><span class="spinner"></span>다른 사람들의 제출을 기다리고 있어요. 강사가 시작 신호를 주면 아래 버튼이 열려요.</p>
+      <button class="btn b wide" id="toPersona" disabled>다른 사람과 이야기하기</button>
+      <div class="err" id="err-w"></div>
+    </div>
+  </section>
+
+  <section class="view" id="v-persona">
+    <div class="layout">
+      <div class="col chat">
+        <h3><span>다른 사람을 닮은 챗봇과 대화하기</span><span class="chip b">누구일까요?</span></h3>
+        <div class="msgs" id="msgs-p"></div>
+        <div class="composer">
+          <textarea id="in-p" placeholder="말을 걸어 보세요" rows="1"></textarea>
+          <button class="send b" id="send-p">보내기</button>
+        </div>
+      </div>
+      <div class="col side">
+        <h3 style="padding:0 0 12px;border:0">대화하며 느낀 점</h3>
+        <p class="sub" style="margin-top:0">자유롭게 대화한 뒤 아래를 적어 제출하면, 이 챗봇의 원래 주인에게 전달돼요.</p>
+        <label for="impression">간단한 소감</label>
+        <textarea id="impression" rows="3" placeholder="이 대화는 어땠나요?"></textarea>
+        <label for="traits">이 사람에게서 느낀 성격·말투</label>
+        <textarea id="traits" rows="5" placeholder="어떤 말투였나요? 어떤 사람일 것 같나요? 근거가 된 말도 적어 주세요."></textarea>
+        <button class="btn b wide" id="sendNote" disabled>소감 제출하기</button>
+        <p class="hint" id="noteHint">3번 이상 대화하면 제출할 수 있어요.</p>
+        <div class="err" id="err-p"></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="view" id="v-result">
+    <div class="result">
+      <div class="block">
+        <h2>챗봇이 기록한 나</h2>
+        <p class="sub">대화하는 동안 챗봇이 정리한 내 말투와 성격이에요. 다른 사람과 대화한 챗봇은 이 기록을 바탕으로 만들어졌어요.</p>
+        <div class="memdoc" id="resMem"></div>
+      </div>
+      <div class="block">
+        <h2>나를 닮은 챗봇과 이야기한 사람의 소감</h2>
+        <p class="sub" id="resNoteSub">아직 도착한 소감이 없어요. 도착하면 자동으로 나타나요.</p>
+        <div id="resNotes"></div>
+      </div>
+      <div class="block">
+        <details>
+          <summary>다른 사람이 내 챗봇과 나눈 대화 보기</summary>
+          <div class="msgs" id="msgs-r" style="padding:12px 0 0"></div>
+        </details>
+      </div>
+      <div class="row" style="justify-content:flex-start"><button class="btn" id="toPersona2">내 챗봇과 대화 나눠보기</button><button class="btn" id="backToStart">처음으로 돌아가기</button></div>
+    </div>
+  </section>
+</div>
+
+<div class="modal" id="ownChatModal"><div class="card" style="display:flex;flex-direction:column;height:min(80vh,680px)"><h2 style="margin:0 0 8px;font-size:18px">내 챗봇과 대화 나눠보기</h2><div class="msgs" id="msgs-own"></div><div class="composer"><textarea id="in-own" placeholder="내 챗봇에게 말을 걸어 보세요" rows="1"></textarea><button class="send b" id="send-own">보내기</button></div><div class="err" id="err-own"></div><div class="row"><button class="btn" id="close-own">닫기</button></div></div></div>
+
+<div class="modal" id="modal">
+  <div class="card">
+    <h2 style="margin:0 0 6px;font-size:18px">제출할 메모리를 확인해 주세요</h2>
+    <p class="sub" id="modalSub" style="margin-top:0">챗봇이 정리한 내 말투와 성격이에요. 공개하고 싶지 않은 내용은 지우거나 고친 뒤 제출하세요.</p>
+    <div id="modalLoading" style="display:none"><span class="spinner"></span>메모리를 정리하는 중…</div>
+    <textarea id="modalMem" style="display:none"></textarea>
+    <div class="err" id="modalErr"></div>
+    <div class="row">
+      <button class="btn" id="modalCancel">취소</button>
+      <button class="btn primary" id="modalOk" disabled>이 내용으로 제출</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const $ = (id) => document.getElementById(id);
+const LS = "persona-lab-v2";
+let S = {};
+try { S = JSON.parse(localStorage.getItem(LS)) || {}; } catch (e) {}
+S.cm = S.cm || []; S.pm = S.pm || []; S.om = S.om || []; S.memory = S.memory || ""; S.memVer = S.memVer || 0;
+S.phase = S.phase || "entry";
+const save = () => { try { localStorage.setItem(LS, JSON.stringify(S)); } catch (e) {} };
+let busy = false;
+let pending = { c: false, p: false };
+let timer = null;
+
+async function api(path, body) {
+  const opt = { method: body ? "POST" : "GET", headers: { "content-type": "application/json" } };
+  if (body) opt.body = JSON.stringify(body);
+  const r = await fetch(path, opt);
+  let d = {};
+  try { d = await r.json(); } catch (e) {}
+  if (!r.ok) { const e = new Error(d.error || "오류가 발생했어요 (" + r.status + ")"); e.status = r.status; throw e; }
+  return d;
+}
+const qs = () => "room=" + encodeURIComponent(S.room) + "&id=" + encodeURIComponent(S.id);
+const count = (list) => list.filter((m) => m.role === "user").length;
+
+function show(phase) {
+  if (phase !== "entry") { S.phase = phase; save(); }
+  clearInterval(timer); timer = null;
+  document.querySelectorAll(".view").forEach((v) => v.classList.toggle("on", v.id === "v-" + phase));
+  const order = ["collect", "wait", "persona", "result"];
+  const idx = order.indexOf(phase);
+  document.querySelectorAll(".step").forEach((s) => {
+    const i = order.indexOf(s.dataset.s);
+    s.classList.toggle("on", i === idx);
+    s.classList.toggle("done", idx >= 0 && i < idx);
+  });
+  $("steps").style.visibility = phase === "entry" ? "hidden" : "visible";
+}
+
+function renderChat(boxId, list, isPending) {
+  const box = $(boxId);
+  box.innerHTML = "";
+  list.forEach((m) => {
+    const d = document.createElement("div");
+    d.className = "msg " + (m.role === "user" ? "user" : "bot");
+    d.textContent = m.content;
+    box.appendChild(d);
+  });
+  if (isPending) {
+    const d = document.createElement("div");
+    d.className = "msg bot pending";
+    d.textContent = "입력 중…";
+    box.appendChild(d);
+  }
+  box.scrollTop = box.scrollHeight;
+}
+function renderC() {
+  renderChat("msgs-c", S.cm, pending.c);
+  const n = count(S.cm);
+  $("resetChat").disabled = busy || !!S.submitted;
+  $("resetChat").style.display = S.submitted ? "none" : "block";
+  $("memChip").textContent = S.memVer ? "기억 갱신 " + S.memVer + "회" : "기록 중";
+  $("submit").disabled = n < 3 || busy;
+  $("submitHint").textContent = n < 3 ? "3번 이상 주고받으면 제출할 수 있어요. (" + n + "/3)" : "대화를 더 나눠도 좋아요. 준비되면 제출해 주세요.";
+}
+function renderP() {
+  renderChat("msgs-p", S.pm, pending.p);
+  const n = count(S.pm);
+  $("sendNote").disabled = n < 3 || busy;
+  $("noteHint").textContent = n < 3 ? "3번 이상 대화하면 제출할 수 있어요. (" + n + "/3)" : S.noteDone ? "소감을 제출했어요. 다시 제출하면 덮어써요." : "";
+}
+
+function handleErr(e, errId) {
+  if (e.status === 401) {
+    $(errId).textContent = e.message;
+  } else $(errId).textContent = e.message;
+}
+
+async function ask(mode, action, which, errId) {
+  const list = which === "c" ? S.cm : S.pm;
+  pending[which] = true; busy = true;
+  which === "c" ? renderC() : renderP();
+  $(errId).textContent = "";
+  try {
+    const d = await api("/api/chat", { mode, action, room: S.room, id: S.id, model: S.model, messages: list, memory: S.memory });
+    if (action !== "refresh") list.push({ role: "assistant", content: d.reply || "…" });
+    if (mode === "collect" && d.memoryUpdated) { S.memory = d.memory; S.memVer += 1; }
+    return d;
+  } finally {
+    pending[which] = false; busy = false;
+    save();
+    which === "c" ? renderC() : renderP();
+  }
+}
+
+async function send(which) {
+  if (busy) return;
+  const inp = $(which === "c" ? "in-c" : "in-p");
+  const text = inp.value.trim();
+  if (!text) return;
+  const list = which === "c" ? S.cm : S.pm;
+  const errId = which === "c" ? "err-c" : "err-p";
+  list.push({ role: "user", content: text });
+  inp.value = ""; inp.style.height = "44px";
+  try {
+    await ask(which === "c" ? "collect" : "persona", "chat", which, errId);
+  } catch (e) {
+    list.pop();
+    inp.value = text;
+    which === "c" ? renderC() : renderP();
+    handleErr(e, errId);
+    if (e.status === 401 && !KEY) { show("entry"); $("entryErr").textContent = e.message; }
+  }
+}
+
+async function greet(which) {
+  const errId = which === "c" ? "err-c" : "err-p";
+  try {
+    await ask(which === "c" ? "collect" : "persona", "greet", which, errId);
+  } catch (e) {
+    handleErr(e, errId);
+    if (e.status === 401 && !KEY) { show("entry"); $("entryErr").textContent = e.message; }
+  }
+}
+
+function wireInput(which) {
+  const inp = $(which === "c" ? "in-c" : "in-p");
+  inp.addEventListener("keydown", (e) => {
+    if (e.key === "Enter" && !e.shiftKey && !e.isComposing) { e.preventDefault(); send(which); }
+  });
+  inp.addEventListener("input", () => { inp.style.height = "44px"; inp.style.height = Math.min(inp.scrollHeight, 120) + "px"; });
+  $(which === "c" ? "send-c" : "send-p").onclick = () => send(which);
+}
+wireInput("c"); wireInput("p");
+
+function startCollect() {
+  show("collect");
+  renderC();
+  if (!S.cm.length) greet("c");
+}
+function startPersona() {
+  show("persona");
+  renderP();
+  if (!S.pm.length) greet("p");
+}
+
+$("start").onclick = async () => {
+  const room = "class";
+  $("entryErr").textContent = "";
+  const same = S.room === room && S.id;
+  if (!same) S = { room, id: (crypto.randomUUID ? crypto.randomUUID() : String(Date.now()) + Math.random().toString(16).slice(2)), cm: [], pm: [], memory: "", memVer: 0, phase: "entry" };
+  S.nick = $("nick").value.trim().slice(0, 20);
+  S.model = $("model").value;
+  save();
+  resume();
+};
+
+function resume() {
+  const p = S.phase;
+  if (p === "persona") return startPersona();
+  if (p === "wait") { if (S.submitPending) return submitMemory(); return startWait(); }
+  if (p === "result") return startResult();
+  startCollect();
+}
+
+async function submitMemory() {
+  if (busy) return;
+  busy = true;
+  S.submitPending = true; save();
+  show("wait");
+  $("waitText").innerHTML = '<span class="spinner"></span>메모리를 생성하고 제출하는 중이에요. 잠시 기다려 주세요.';
+  $("toPersona").disabled = true;
+  $("err-w").textContent = "";
+  try {
+    const d = await api("/api/chat", { mode: "collect", action: "refresh", room: S.room, id: S.id, model: S.model, messages: S.cm, memory: S.memory });
+    if (d.memoryUpdated) { S.memory = d.memory; S.memVer += 1; save(); }
+    if (!S.memory.trim()) throw new Error("메모리가 만들어지지 않았어요. 대화를 조금 더 나눈 뒤 다시 시도해 주세요.");
+    await api("/api/submit", { room: S.room, id: S.id, nick: S.nick || "", memory: S.memory });
+    S.submitted = true; S.submitPending = false; save(); startWait();
+  } catch (e) {
+    S.submitPending = false; save();
+    $("err-c").textContent = e.message;
+    show("collect");
+  } finally {
+    busy = false;
+    renderC();
+  }
+}
+$("submit").onclick = submitMemory;
+$("modalCancel").onclick = () => $("modal").classList.remove("on");
+$("modalOk").onclick = async () => {
+  const mem = $("modalMem").value.trim();
+  if (mem.length < 20) { $("modalErr").textContent = "메모리가 너무 짧아요."; return; }
+  $("modalOk").disabled = true;
+  try {
+    await api("/api/submit", { room: S.room, id: S.id, nick: S.nick || "", memory: mem });
+    S.memory = mem; S.submitted = true; save();
+    $("modal").classList.remove("on");
+    startWait();
+  } catch (e) {
+    $("modalErr").textContent = e.message;
+    $("modalOk").disabled = false;
+  }
+};
+
+$("resetChat").onclick = () => {
+  if (busy || S.submitted) return;
+  if (!window.confirm("이 기기의 대화와 기록된 메모리를 지우고 처음부터 다시 시작할까요?")) return;
+  S.id = (crypto.randomUUID ? crypto.randomUUID() : String(Date.now()) + Math.random().toString(16).slice(2));
+  S.cm = []; S.pm = []; S.om = []; S.memory = ""; S.memVer = 0; S.noteDone = false; S.myNote = null; S.submitted = false; S.phase = "collect";
+  save();
+  $("err-c").textContent = "";
+  $("in-c").value = "";
+  startCollect();
+};
+
+async function pollWait() {
+  try {
+    const d = await api("/api/status?" + qs());
+    if (d.assigned) {
+      $("waitText").innerHTML = "";
+      $("waitText").textContent = "대화 상대가 정해졌어요. 아래 버튼을 눌러 이야기해 보세요.";
+      $("toPersona").disabled = false;
+    } else {
+      $("waitText").textContent = "";
+      const sp = document.createElement("span"); sp.className = "spinner";
+      $("waitText").appendChild(sp);
+      $("waitText").appendChild(document.createTextNode("다른 사람들의 제출을 기다리고 있어요. 강사가 시작 신호를 주면 아래 버튼이 열려요."));
+      $("toPersona").disabled = true;
+    }
+  } catch (e) { $("err-w").textContent = e.message; }
+}
+function startWait() {
+  show("wait");
+  $("err-w").textContent = "";
+  if (S.submitPending) { $("waitText").innerHTML = '<span class="spinner"></span>메모리를 생성하고 제출하는 중이에요. 잠시 기다려 주세요.'; $("toPersona").disabled = true; return; }
+  pollWait();
+  timer = setInterval(pollWait, 6000);
+}
+$("toPersona").onclick = startPersona;
+$("toPersona2").onclick = async () => { $("ownChatModal").classList.add("on"); renderChat("msgs-own", S.om, false); if (!S.om.length) await ownAsk("greet"); };
+$("backToStart").onclick = () => { if (!window.confirm("이 기기의 진행 상태와 대화를 지우고 처음부터 시작할까요?")) return; S = { cm:[], pm:[], om:[], memory:"", memVer:0, phase:"entry" }; save(); $("nick").value = ""; show("entry"); };
+$("close-own").onclick = () => $("ownChatModal").classList.remove("on");
+async function ownAsk(action) { if (busy) return; busy = true; $("send-own").disabled = true; $("err-own").textContent = ""; try { const d = await api("/api/chat", { mode:"own", action, room:S.room, id:S.id, model:S.model, messages:S.om }); S.om.push({ role:"assistant", content:d.reply || "…" }); save(); renderChat("msgs-own", S.om, false); } catch(e) { if(action==="chat") { const failed=S.om.pop(); $("in-own").value=failed?.content||""; } $("err-own").textContent = e.message; renderChat("msgs-own", S.om, false); } finally { busy = false; $("send-own").disabled = false; } }
+$("send-own").onclick = () => { const input = $("in-own"), value = input.value.trim(); if (!value || busy) return; S.om.push({role:"user",content:value}); input.value = ""; renderChat("msgs-own", S.om, true); ownAsk("chat"); };
+$("in-own").addEventListener("keydown", e => { if(e.key === "Enter" && !e.shiftKey && !e.isComposing) { e.preventDefault(); $("send-own").click(); } });
+
+$("sendNote").onclick = async () => {
+  const impression = $("impression").value.trim();
+  const traits = $("traits").value.trim();
+  if (impression.length < 2 || traits.length < 2) { $("err-p").textContent = "소감과 느낀 점을 모두 적어 주세요."; return; }
+  $("sendNote").disabled = true;
+  try {
+    await api("/api/note", { room: S.room, id: S.id, nick: S.nick || "", impression, traits });
+    S.noteDone = true; S.myNote = { impression, traits }; save();
+    startResult();
+  } catch (e) {
+    $("err-p").textContent = e.message;
+    $("sendNote").disabled = false;
+  }
+};
+
+function renderMemDoc(el, text) {
+  el.innerHTML = "";
+  let ul = null;
+  String(text || "").split("\n").forEach((line) => {
+    const t = line.trimEnd();
+    if (!t.trim()) { ul = null; return; }
+    let node;
+    if (/^##\s+/.test(t)) { node = document.createElement("h4"); node.textContent = t.replace(/^##\s+/, ""); ul = null; }
+    else if (/^#\s+/.test(t)) { node = document.createElement("h3"); node.textContent = t.replace(/^#\s+/, ""); ul = null; }
+    else if (/^\s*[-*]\s+/.test(t)) {
+      if (!ul) { ul = document.createElement("ul"); el.appendChild(ul); }
+      const li = document.createElement("li"); li.textContent = t.replace(/^\s*[-*]\s+/, ""); ul.appendChild(li); return;
+    } else { node = document.createElement("p"); node.textContent = t; ul = null; }
+    el.appendChild(node);
+  });
+}
+function renderNote(parent, n, showNick) {
+  const d = document.createElement("div"); d.className = "note";
+  const b1 = document.createElement("b"); b1.textContent = showNick ? ((n.nick || "익명") + "의 소감") : "소감";
+  const p1 = document.createElement("p"); p1.textContent = n.impression;
+  const b2 = document.createElement("b"); b2.textContent = "느낀 성격·말투";
+  const p2 = document.createElement("p"); p2.textContent = n.traits;
+  d.append(b1, p1, b2, p2);
+  parent.appendChild(d);
+}
+async function pollResult() {
+  try {
+    const d = await api("/api/result?" + qs());
+    renderMemDoc($("resMem"), d.memory);
+    const box = $("resNotes"); box.innerHTML = "";
+    d.notes.forEach((n) => renderNote(box, n, true));
+    const chats = d.chats || [];
+    const chatBox = $("msgs-r"); chatBox.replaceChildren();
+    if (!chats.length) chatBox.textContent = "아직 대화가 없어요.";
+    chats.forEach((chat) => { const title = document.createElement("b"); title.textContent = (chat.nick || "익명") + "의 대화"; chatBox.appendChild(title); chat.messages.forEach((m) => { const row = document.createElement("div"); row.className = "msg " + (m.role === "user" ? "user" : "bot"); row.textContent = m.content; chatBox.appendChild(row); }); });
+    $("resNoteSub").textContent = d.notes.length ? "나를 닮은 챗봇과 이야기한 사람이 남긴 소감이에요." : "아직 도착한 소감이 없어요. 도착하면 자동으로 나타나요.";
+  } catch (e) {
+    $("resNoteSub").textContent = e.message;
+  }
+}
+function startResult() {
+  show("result");
+  pollResult();
+  timer = setInterval(pollResult, 8000);
+}
+
+$("nick").value = S.nick || "";
+$("model").value = S.model || "claude-sonnet-5-5";
+if (S.phase !== "entry" && S.room && S.id) resume();
+else show("entry");
+</script>
+</body>
+</html>
