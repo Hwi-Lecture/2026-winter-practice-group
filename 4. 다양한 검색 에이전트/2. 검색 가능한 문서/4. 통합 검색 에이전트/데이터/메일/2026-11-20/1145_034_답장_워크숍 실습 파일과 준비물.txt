@@ -1,0 +1,9 @@
+보낸 날짜: 2026-11-20 11:45 +09:00
+보낸 사람: 김민준 <minjun@example.org>
+받는 사람: 박소연 <soyeon@example.org>
+제목: Re: 워크숍 실습 파일과 준비물
+Message-ID: <mail-034@example.org>
+In-Reply-To: <mail-025@example.org>
+References: <mail-003@example.org> <mail-015@example.org> <mail-025@example.org>
+
+인쇄물 1차 PDF를 정리했습니다. 표지에 ‘11월 28일(토) 오후 2시, 3층 모임실 B’를 넣었고, 마지막 쪽에 예제 파일 목록을 넣었습니다. 최종 PDF는 11월 23일(월) 오후 3시까지 전달하겠습니다.

@@ -1,0 +1,9 @@
+보낸 날짜: 2026-11-18 09:55 +09:00
+보낸 사람: 서지민 <jimin@example.org>
+받는 사람: 박소연 <soyeon@example.org>, 윤하늘 <haneul@example.org>, 김민준 <minjun@example.org>
+제목: Re: 11월 28일 ‘생활 속 AI’ 워크숍 준비
+Message-ID: <mail-018@example.org>
+In-Reply-To: <mail-017@example.org>
+References: <mail-001@example.org> <mail-002@example.org> <mail-017@example.org>
+
+장소를 3층 모임실 B로 변경하겠습니다. 워크숍 날짜와 시간은 11월 28일(토) 오후 2시~4시 그대로입니다. 소연 님은 예약을 확정해 주시고, 하늘 님은 기존 신청자와 이후 신청자 모두 새 장소를 볼 수 있게 반영해 주세요.

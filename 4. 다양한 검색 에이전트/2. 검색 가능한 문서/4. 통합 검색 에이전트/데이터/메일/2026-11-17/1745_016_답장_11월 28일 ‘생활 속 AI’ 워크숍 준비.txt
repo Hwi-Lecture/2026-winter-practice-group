@@ -1,0 +1,9 @@
+보낸 날짜: 2026-11-17 17:45 +09:00
+보낸 사람: 윤하늘 <haneul@example.org>
+받는 사람: 서지민 <jimin@example.org>, 박소연 <soyeon@example.org>
+제목: Re: 11월 28일 ‘생활 속 AI’ 워크숍 준비
+Message-ID: <mail-016@example.org>
+In-Reply-To: <mail-010@example.org>
+References: <mail-001@example.org> <mail-004@example.org> <mail-009@example.org> <mail-010@example.org>
+
+오늘 오후 5시 30분 기준으로 12명이 신청했습니다. 대기자는 아직 없고, 노트북은 정유나 님 한 분이 대여를 요청하셨습니다.

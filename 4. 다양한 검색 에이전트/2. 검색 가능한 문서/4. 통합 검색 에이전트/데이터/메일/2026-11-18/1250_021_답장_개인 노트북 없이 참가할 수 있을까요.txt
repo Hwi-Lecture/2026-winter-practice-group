@@ -1,0 +1,9 @@
+보낸 날짜: 2026-11-18 12:50 +09:00
+보낸 사람: 정유나 <yuna@example.org>
+받는 사람: 윤하늘 <haneul@example.org>
+제목: Re: 개인 노트북 없이 참가할 수 있을까요?
+Message-ID: <mail-021@example.org>
+In-Reply-To: <mail-012@example.org>
+References: <mail-011@example.org> <mail-012@example.org>
+
+장소 변경 메일 받았습니다. 3층으로 가면 예전에 예약해 주신 대여 노트북도 거기서 받는 게 맞을까요?

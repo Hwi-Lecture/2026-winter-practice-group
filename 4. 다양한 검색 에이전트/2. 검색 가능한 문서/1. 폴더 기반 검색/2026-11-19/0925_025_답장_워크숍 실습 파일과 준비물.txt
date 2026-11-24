@@ -1,0 +1,9 @@
+보낸 날짜: 2026-11-19 09:25 +09:00
+보낸 사람: 김민준 <minjun@example.org>
+받는 사람: 서지민 <jimin@example.org>, 박소연 <soyeon@example.org>
+제목: Re: 워크숍 실습 파일과 준비물
+Message-ID: <mail-025@example.org>
+In-Reply-To: <mail-015@example.org>
+References: <mail-003@example.org> <mail-015@example.org>
+
+모임실 B에서 화면을 확인해 보니 뒤쪽에서도 글씨가 잘 보였습니다. 실습은 오후 2시 15분부터 시작하고, 중간에 10분 쉬는 시간을 넣겠습니다. 인쇄물에는 실습 순서와 예제 파일 이름만 넣을게요.

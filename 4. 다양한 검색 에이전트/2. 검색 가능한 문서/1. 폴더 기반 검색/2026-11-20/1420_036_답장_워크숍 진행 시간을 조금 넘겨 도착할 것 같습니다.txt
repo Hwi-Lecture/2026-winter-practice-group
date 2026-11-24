@@ -1,0 +1,9 @@
+보낸 날짜: 2026-11-20 14:20 +09:00
+보낸 사람: 임나래 <narae@example.org>
+받는 사람: 윤하늘 <haneul@example.org>
+제목: Re: 워크숍 진행 시간을 조금 넘겨 도착할 것 같습니다
+Message-ID: <mail-036@example.org>
+In-Reply-To: <mail-024@example.org>
+References: <mail-023@example.org> <mail-024@example.org>
+
+입실 시간 안내 감사합니다. 교대가 바뀌어서 오후 1시 50분쯤 도착할 수 있게 됐습니다. 늦게 들어가는 분을 위해 자리를 남겨 주실 필요는 없습니다.

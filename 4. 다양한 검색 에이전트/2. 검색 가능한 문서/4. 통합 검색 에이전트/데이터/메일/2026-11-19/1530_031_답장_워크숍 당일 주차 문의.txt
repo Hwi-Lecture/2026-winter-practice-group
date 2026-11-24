@@ -1,0 +1,9 @@
+보낸 날짜: 2026-11-19 15:30 +09:00
+보낸 사람: 윤하늘 <haneul@example.org>
+받는 사람: 한도윤 <doyun@example.org>
+제목: Re: 워크숍 당일 주차 문의
+Message-ID: <mail-031@example.org>
+In-Reply-To: <mail-030@example.org>
+References: <mail-013@example.org> <mail-014@example.org> <mail-030@example.org>
+
+네, 3층 모임실 B 앞 접수대에서 참가 확인과 차량 번호 등록을 함께 해 드립니다. 등록 후 건물 지하 주차장 2시간 무료 조건은 같습니다.

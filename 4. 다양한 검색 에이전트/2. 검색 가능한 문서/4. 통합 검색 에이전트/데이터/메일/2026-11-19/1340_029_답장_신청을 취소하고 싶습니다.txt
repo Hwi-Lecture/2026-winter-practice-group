@@ -1,0 +1,9 @@
+보낸 날짜: 2026-11-19 13:40 +09:00
+보낸 사람: 윤하늘 <haneul@example.org>
+받는 사람: 강은서 <eunseo@example.org>
+제목: Re: 신청을 취소하고 싶습니다
+Message-ID: <mail-029@example.org>
+In-Reply-To: <mail-028@example.org>
+References: <mail-028@example.org>
+
+신청을 취소했습니다. 별도로 하실 일은 없습니다. 미리 알려주셔서 감사합니다.

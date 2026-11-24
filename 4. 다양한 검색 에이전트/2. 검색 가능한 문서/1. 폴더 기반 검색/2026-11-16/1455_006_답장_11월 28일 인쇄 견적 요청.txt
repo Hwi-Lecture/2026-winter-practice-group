@@ -1,0 +1,9 @@
+보낸 날짜: 2026-11-16 14:55 +09:00
+보낸 사람: 박소연 <soyeon@example.org>
+받는 사람: 오태훈 <taehun@example.org>, 김민준 <minjun@example.org>
+제목: Re: 11월 28일 인쇄 견적 요청
+Message-ID: <mail-006@example.org>
+In-Reply-To: <mail-005@example.org>
+References: <mail-005@example.org>
+
+30부로 잠정 예약해 주세요. 참가자 20명과 운영진 몫을 포함한 수량입니다. 대기 신청 인원을 함께 확인한 뒤 이번 주 안에 수량을 확정해 회신하겠습니다.

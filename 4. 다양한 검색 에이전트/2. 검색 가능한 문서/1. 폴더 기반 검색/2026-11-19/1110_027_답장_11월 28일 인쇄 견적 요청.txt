@@ -1,0 +1,9 @@
+보낸 날짜: 2026-11-19 11:10 +09:00
+보낸 사람: 오태훈 <taehun@example.org>
+받는 사람: 박소연 <soyeon@example.org>, 김민준 <minjun@example.org>
+제목: Re: 11월 28일 인쇄 견적 요청
+Message-ID: <mail-027@example.org>
+In-Reply-To: <mail-026@example.org>
+References: <mail-005@example.org> <mail-006@example.org> <mail-026@example.org>
+
+30부 확정했습니다. 금액은 처음 견적과 같은 18,000원이고, 최종 PDF 마감은 11월 24일(화) 정오입니다. 받으면 교정본 한 장을 먼저 보내 드리겠습니다.

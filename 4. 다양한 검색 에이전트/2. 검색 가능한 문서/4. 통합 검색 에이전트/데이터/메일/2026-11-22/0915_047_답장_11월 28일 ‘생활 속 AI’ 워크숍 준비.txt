@@ -1,0 +1,9 @@
+보낸 날짜: 2026-11-22 09:15 +09:00
+보낸 사람: 서지민 <jimin@example.org>
+받는 사람: 윤하늘 <haneul@example.org>, 박소연 <soyeon@example.org>, 김민준 <minjun@example.org>
+제목: Re: 11월 28일 ‘생활 속 AI’ 워크숍 준비
+Message-ID: <mail-047@example.org>
+In-Reply-To: <mail-044@example.org>
+References: <mail-001@example.org> <mail-002@example.org> <mail-017@example.org> <mail-018@example.org> <mail-019@example.org> <mail-020@example.org> <mail-032@example.org> <mail-033@example.org> <mail-038@example.org> <mail-044@example.org>
+
+오늘 오후에 확정 참가자 20명에게 최종 안내를 보내 주세요. 3층 모임실 B, 오후 1시 40분 접수, 오후 2시 시작을 꼭 넣어 주세요. 대기 중인 두 분께는 빈자리가 생기면 별도로 연락하겠습니다.

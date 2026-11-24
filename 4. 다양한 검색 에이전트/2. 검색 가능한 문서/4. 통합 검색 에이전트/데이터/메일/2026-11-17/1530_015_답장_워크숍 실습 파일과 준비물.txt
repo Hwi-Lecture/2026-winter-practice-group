@@ -1,0 +1,9 @@
+보낸 날짜: 2026-11-17 15:30 +09:00
+보낸 사람: 김민준 <minjun@example.org>
+받는 사람: 서지민 <jimin@example.org>, 윤하늘 <haneul@example.org>
+제목: Re: 워크숍 실습 파일과 준비물
+Message-ID: <mail-015@example.org>
+In-Reply-To: <mail-003@example.org>
+References: <mail-003@example.org>
+
+예제 파일을 세 개로 확정했습니다. 행사 개요, 신청 안내, 장소 변경 공지를 비교하는 실습입니다. 참가자에게는 개인 문서 대신 수업용 파일을 사용해 달라고 안내해 주세요.

@@ -1,0 +1,9 @@
+보낸 날짜: 2026-11-19 10:40 +09:00
+보낸 사람: 박소연 <soyeon@example.org>
+받는 사람: 오태훈 <taehun@example.org>, 김민준 <minjun@example.org>
+제목: Re: 11월 28일 인쇄 견적 요청
+Message-ID: <mail-026@example.org>
+In-Reply-To: <mail-006@example.org>
+References: <mail-005@example.org> <mail-006@example.org>
+
+인쇄물 30부로 확정 부탁드립니다. 장소가 바뀌어서 표지에 ‘3층 모임실 B’를 반영할 예정입니다. 인쇄는 다음 주에 보내드릴 최종 PDF로 진행해 주세요.

@@ -1,0 +1,9 @@
+보낸 날짜: 2026-11-17 11:20 +09:00
+보낸 사람: 윤하늘 <haneul@example.org>
+받는 사람: 정유나 <yuna@example.org>
+제목: Re: 개인 노트북 없이 참가할 수 있을까요?
+Message-ID: <mail-012@example.org>
+In-Reply-To: <mail-011@example.org>
+References: <mail-011@example.org>
+
+대여용 노트북이 두 대 있습니다. 신청 기록에 대여 요청을 남겼고, 한 대를 유나 님 앞으로 예약했습니다. 현장 접수 때 성함을 말씀해 주세요.

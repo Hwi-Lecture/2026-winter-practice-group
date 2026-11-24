@@ -1,0 +1,9 @@
+보낸 날짜: 2026-11-21 16:40 +09:00
+보낸 사람: 김민준 <minjun@example.org>
+받는 사람: 윤하늘 <haneul@example.org>, 서지민 <jimin@example.org>
+제목: Re: 워크숍 실습 파일과 준비물
+Message-ID: <mail-046@example.org>
+In-Reply-To: <mail-015@example.org>
+References: <mail-003@example.org> <mail-015@example.org>
+
+실습 링크를 열면 예제 파일 세 개를 한 번에 받을 수 있게 준비했습니다. 안내 메일에는 와이파이 접속 정보와 실습 링크를 당일 화면으로 안내한다고 써 주세요. 브라우저는 평소 사용하시는 것으로 충분합니다.

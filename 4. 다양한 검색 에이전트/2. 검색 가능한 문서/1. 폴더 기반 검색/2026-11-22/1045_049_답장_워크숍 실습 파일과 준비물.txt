@@ -1,0 +1,9 @@
+보낸 날짜: 2026-11-22 10:45 +09:00
+보낸 사람: 김민준 <minjun@example.org>
+받는 사람: 윤하늘 <haneul@example.org>
+제목: Re: 워크숍 실습 파일과 준비물
+Message-ID: <mail-049@example.org>
+In-Reply-To: <mail-048@example.org>
+References: <mail-003@example.org> <mail-015@example.org> <mail-046@example.org> <mail-048@example.org>
+
+네, 입력과 문서 비교는 노트북 화면을 기준으로 진행합니다. 휴대전화는 안내 확인용으로 쓸 수 있고, 노트북이 없다면 대여 가능 여부를 사전에 문의하도록 적어 주세요.

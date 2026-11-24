@@ -1,0 +1,9 @@
+보낸 날짜: 2026-11-22 10:10 +09:00
+보낸 사람: 윤하늘 <haneul@example.org>
+받는 사람: 김민준 <minjun@example.org>
+제목: Re: 워크숍 실습 파일과 준비물
+Message-ID: <mail-048@example.org>
+In-Reply-To: <mail-046@example.org>
+References: <mail-003@example.org> <mail-015@example.org> <mail-046@example.org>
+
+참가자 안내에 노트북과 충전기, 별도 설치 없이 브라우저 사용, 예제 파일은 현장에서 배포한다고 넣었습니다. 휴대전화만 가져오면 일부 실습이 어려울 수 있다는 문장도 넣어도 될까요?

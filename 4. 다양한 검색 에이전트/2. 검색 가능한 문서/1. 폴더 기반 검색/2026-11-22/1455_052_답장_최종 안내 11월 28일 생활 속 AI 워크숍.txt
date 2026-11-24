@@ -1,0 +1,9 @@
+보낸 날짜: 2026-11-22 14:55 +09:00
+보낸 사람: 윤하늘 <haneul@example.org>
+받는 사람: 한도윤 <doyun@example.org>
+제목: Re: [최종 안내] 11월 28일 생활 속 AI 워크숍
+Message-ID: <mail-052@example.org>
+In-Reply-To: <mail-051@example.org>
+References: <mail-050@example.org> <mail-051@example.org>
+
+도윤 님 앞으로 대여용 노트북 한 대를 예약했습니다. 당일 오후 1시 40분부터 3층 모임실 B 앞 접수대에서 충전기와 함께 받아 주세요.

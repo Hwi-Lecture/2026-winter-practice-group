@@ -1,0 +1,9 @@
+보낸 날짜: 2026-11-20 15:15 +09:00
+보낸 사람: 윤하늘 <haneul@example.org>
+받는 사람: 임나래 <narae@example.org>
+제목: Re: 워크숍 진행 시간을 조금 넘겨 도착할 것 같습니다
+Message-ID: <mail-037@example.org>
+In-Reply-To: <mail-036@example.org>
+References: <mail-023@example.org> <mail-024@example.org> <mail-036@example.org>
+
+알려주신 도착 시각을 접수 메모에 반영했습니다. 오후 1시 50분에 오시면 다른 참가자와 함께 안내받으실 수 있습니다.

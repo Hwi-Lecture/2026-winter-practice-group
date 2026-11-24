@@ -1,0 +1,562 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>신청자 표 조회 실습</title>
+  <style>
+    :root {
+      color-scheme: light;
+      font-family: "Segoe UI", "Malgun Gothic", system-ui, sans-serif;
+      color: #1e283c;
+      background: #f2f4f9;
+      --accent: #5036a9;
+      --muted: #526078;
+      --border: #dce1eb;
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; }
+    [hidden] { display: none !important; }
+    button, input { font: inherit; }
+    button { cursor: pointer; }
+    button:disabled { cursor: default; opacity: .58; }
+    :focus-visible { outline: 3px solid #7257dc; outline-offset: 3px; }
+    .page { width: min(1180px, calc(100% - 48px)); margin: 0 auto; padding: 44px 0; }
+    header { display: flex; align-items: start; justify-content: space-between; gap: 16px; margin-bottom: 28px; }
+    h1, h2, h3, p { margin: 0; }
+    h1 { font-size: clamp(1.65rem, 4vw, 2.35rem); letter-spacing: -.045em; }
+    h2 { font-size: 1.125rem; letter-spacing: -.025em; }
+    h3 { font-size: .875rem; color: var(--muted); }
+    header p, .hint { color: var(--muted); line-height: 1.65; margin-top: 6px; }
+    .layout { display: grid; grid-template-columns: minmax(0, 360px) minmax(0, 1fr); gap: 20px; align-items: start; }
+    .side { display: grid; gap: 20px; }
+    .card { background: white; border: 1px solid var(--border); border-radius: 18px; padding: 24px; }
+    .group { margin-top: 21px; }
+    .examples { list-style: none; padding: 0; margin: 9px 0 0; display: grid; gap: 7px; }
+    .example, .secondary { border: 1px solid var(--border); border-radius: 10px; background: white; color: inherit; }
+    .example {
+      display: flex; align-items: center; gap: 12px; justify-content: space-between;
+      width: 100%; padding: 12px; text-align: left; line-height: 1.55; font-size: .91rem;
+    }
+    .example::after { content: "↗" / ""; color: var(--accent); flex-shrink: 0; }
+    .example:not(:disabled):hover, .example[aria-current="true"] { background: #f2edff; border-color: #9e89e1; }
+    .secondary { flex-shrink: 0; padding: 9px 14px; font-size: .875rem; }
+    .secondary:not(:disabled):hover { border-color: var(--accent); color: var(--accent); }
+    .options { margin-bottom: 20px; }
+    .settings { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; margin-top: 14px; align-items: start; }
+    .setting { margin-top: 0; }
+    .setting > h3 { margin-bottom: 7px; }
+    .switches { display: grid; gap: 8px; }
+    .switches.row { grid-template-columns: 1fr 1fr; }
+    .switch {
+      display: flex; gap: 10px; align-items: start; padding: 10px 12px; border: 1px solid var(--border);
+      border-radius: 10px; cursor: pointer; line-height: 1.5;
+    }
+    .switch:has(input:checked) { background: #f2edff; border-color: #9e89e1; }
+    .switch:has(input:disabled) { cursor: default; opacity: .55; }
+    .switch input { margin-top: 4px; accent-color: var(--accent); }
+    .switch strong { display: block; font-size: .93rem; }
+    .switch small { color: var(--muted); font-size: .82rem; }
+    .guide { margin-top: 16px; border-top: 1px solid var(--border); padding-top: 14px; display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 20px; }
+    .guide h4 { margin: 0 0 4px; font-size: .9rem; color: var(--accent); }
+    .guide h5 { margin: 8px 0 2px; font-size: .8rem; color: var(--muted); }
+    .guide ul { margin: 0; padding-left: 1.2em; font-size: .86rem; line-height: 1.6; }
+    .composer { display: flex; gap: 8px; margin-top: 10px; }
+    .composer input {
+      min-width: 0; flex: 1; padding: 12px; border: 1px solid #a8b2c5; border-radius: 10px; color: inherit;
+    }
+    .primary { flex-shrink: 0; color: white; background: var(--accent); border: 0; border-radius: 10px; padding: 10px 18px; font-weight: 600; }
+    .primary:not(:disabled):hover { background: #3d2787; }
+    .output { margin-top: 22px; border-top: 1px solid var(--border); padding-top: 20px; }
+    .used { margin-top: 10px; display: flex; flex-wrap: wrap; gap: 6px; }
+    .used span { padding: 2px 9px; border-radius: 999px; background: #f2edff; color: var(--accent); font-size: .8rem; font-weight: 600; }
+    .asked { margin-top: 12px; width: fit-content; max-width: 100%; background: #efe9ff; padding: 10px 14px; border-radius: 10px; line-height: 1.55; overflow-wrap: anywhere; }
+    .answer { margin-top: 12px; line-height: 1.75; white-space: pre-wrap; overflow-wrap: anywhere; }
+    .answer[data-state="error"] { color: #a02839; }
+    .attempts { margin-top: 24px; border-top: 1px solid var(--border); padding-top: 17px; display: grid; gap: 18px; }
+    .attempt h3 { color: var(--accent); }
+    .attempt h4 { margin: 10px 0 0; font-size: .82rem; color: var(--muted); }
+    pre { margin: 6px 0 0; padding: 12px; background: #f5f6fb; border-radius: 10px; overflow-x: auto; white-space: pre-wrap; overflow-wrap: anywhere; font: .85rem/1.6 Consolas, "Malgun Gothic", monospace; }
+    pre[data-state="error"] { color: #a02839; }
+    @media (max-width: 800px) {
+      .page { width: min(100% - 28px, 600px); padding: 23px 0; }
+      .layout { grid-template-columns: minmax(0, 1fr); gap: 14px; }
+      .card { padding: 17px; }
+      .options { margin-bottom: 14px; }
+      .settings, .guide { grid-template-columns: minmax(0, 1fr); }
+      header { margin-bottom: 17px; }
+      header p { font-size: .9rem; }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <header>
+      <div>
+        <h1>신청자 표 조회 실습</h1>
+        <p>질문을 표 조회로 바꿔 워크숍 신청자 표를 조회하고, 조회 결과로 답합니다.</p>
+      </div>
+      <button class="secondary" id="close" type="button">앱 종료</button>
+    </header>
+
+    <section class="card options" aria-labelledby="options-title">
+      <h2 id="options-title">조회 기능</h2>
+      <div class="settings">
+      <div class="setting">
+        <h3>조회 방법</h3>
+        <div class="switches">
+          <label class="switch">
+            <input type="radio" name="method" value="fixed">
+            <span><strong>① 고정 조회</strong><small>앱에 준비된 조회를 고르고 조건값만 채웁니다.</small></span>
+          </label>
+          <label class="switch">
+            <input type="radio" name="method" value="free" checked>
+            <span><strong>② 자유 쿼리</strong><small>Claude가 조회 코드(pandas 또는 SQL)를 직접 씁니다.</small></span>
+          </label>
+        </div>
+      </div>
+      <div class="setting">
+        <h3>쿼리 언어 (자유 쿼리)</h3>
+        <div class="switches row">
+          <label class="switch"><input type="radio" name="engine" value="pandas" checked><span><strong>pandas</strong><small>엑셀 파일</small></span></label>
+          <label class="switch"><input type="radio" name="engine" value="sql"><span><strong>SQL</strong><small>DB 파일</small></span></label>
+        </div>
+      </div>
+      <div class="setting">
+        <h3>추가 기능 (자유 쿼리)</h3>
+        <div class="switches">
+          <label class="switch">
+            <input type="checkbox" id="opt-examples">
+            <span><strong>③ 값 예시 함께 보내기</strong><small>컬럼별로 실제 저장된 값의 예시를 함께 알려 줍니다.</small></span>
+          </label>
+          <label class="switch">
+            <input type="checkbox" id="opt-retry">
+            <span><strong>④ 결과가 비면 다시 조회</strong><small>결과가 없거나 오류가 나면 쿼리를 다시 씁니다.</small></span>
+          </label>
+        </div>
+      </div>
+      </div>
+      <div class="guide" id="guide" aria-live="polite"></div>
+    </section>
+
+    <main class="layout">
+      <div class="side">
+        <section class="card" aria-labelledby="ask-title">
+          <h2 id="ask-title">예시 질문</h2>
+          <div class="group">
+            <h3>쉬운 질문</h3>
+            <ul class="examples">
+              <li><button class="example" type="button">노트북 대여가 필요한 사람은 몇 명인가요?</button></li>
+              <li><button class="example" type="button">대기 신청자를 신청일이 빠른 순서로 알려주세요.</button></li>
+              <li><button class="example" type="button">참가 상태인 사람의 구분별 인원수를 알려주세요.</button></li>
+            </ul>
+          </div>
+          <div class="group">
+            <h3>어려운 질문</h3>
+            <ul class="examples">
+              <li><button class="example" type="button">신청을 취소한 사람은 몇 명인가요?</button></li>
+              <li><button class="example" type="button">11월 19일에 신청한 사람은 누구인가요?</button></li>
+              <li><button class="example" type="button">김서연 님의 신청 상태를 알려주세요.</button></li>
+              <li><button class="example" type="button">거동이 불편해서 배려가 필요한 분이 있나요?</button></li>
+              <li><button class="example" type="button">참가자 평균 나이는 몇 살인가요?</button></li>
+              <li><button class="example" type="button">워크숍은 어디에서 몇 시에 열리나요?</button></li>
+            </ul>
+          </div>
+        </section>
+      </div>
+
+      <section class="card" aria-labelledby="input-title">
+        <form id="composer">
+          <h2 id="input-title"><label for="question">직접 질문하기</label></h2>
+          <div class="composer">
+            <input id="question" placeholder="신청자 표에 대해 궁금한 점을 입력하세요" maxlength="500" required>
+            <button class="primary" id="submit" type="submit">질문하기</button>
+          </div>
+        </form>
+        <div class="output" id="output">
+          <h2>답변</h2>
+          <div class="used" id="used" hidden></div>
+          <p class="asked" id="asked" hidden></p>
+          <p class="answer" id="answer" role="status" aria-live="polite">예시 질문을 누르거나 직접 입력해 보세요.</p>
+          <div id="raw-slot"></div>
+          <section class="attempts" id="attempts" aria-label="실행한 조회" hidden></section>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    const GUIDES = {
+      fixed: {
+        title: "① 고정 조회",
+        added: [
+          "앱에 조회 두 가지를 미리 만들어 둠: 인원 세기(count_applicants), 명단 보기(list_applicants)",
+          "Claude는 어떤 조회를 쓸지와 조건값(상태, 구분, 신청일, 이름, 비고 단어 등)만 정함",
+          "이름 앞뒤 공백, 날짜 형식(2026.11.19 → 2026-11-19)은 앱 코드가 미리 정리함",
+          "상태·구분처럼 값이 정해진 조건은 고를 수 있는 값 목록을 함께 알려 줌",
+        ],
+        check: [
+          "어려운 질문(취소 인원, 11월 19일, 김서연 님)의 결과",
+          "‘Claude에게 보낸 내용 보기’의 tools에 들어 있는 조회 목록과 값 목록",
+          "‘거동이 불편한 분’ 질문에서 비고 단어를 무엇으로 넣는지",
+          "평균 나이처럼 준비된 조회로 답할 수 없는 질문을 어떻게 처리하는지",
+          "질문 하나에 Claude를 2번 호출함: 조회 고르기 → 결과로 답하기",
+        ],
+      },
+      free: {
+        title: "② 자유 쿼리",
+        added: [
+          "Claude가 표의 컬럼 구조만 보고 pandas 코드 또는 SQL을 직접 작성함",
+          "앱은 작성된 쿼리를 실행하고, 조회 결과를 다시 Claude에게 보내 답을 받음",
+        ],
+        check: [
+          "쉬운 질문에서 pandas와 SQL 쿼리를 나란히 비교",
+          "어려운 질문에서는 답변보다 실행한 쿼리와 조회 결과를 먼저 보기",
+          "①에서 맞았던 질문 중 틀리는 질문이 있는지, 그 이유는 무엇인지",
+          "조건이 맞지 않아 결과가 비어도 오류 없이 \"없다\"는 답이 나오는지",
+        ],
+      },
+      examples: {
+        title: "③ 값 예시 함께 보내기",
+        added: ["컬럼마다 실제로 저장된 값을 최대 15개까지 표 구조와 함께 보냄"],
+        check: [
+          "‘Claude에게 보낸 내용 보기’에서 값 예시 확인 (‘취소요청’, ‘2026.11.19’가 보이는지)",
+          "취소 인원, 11월 19일 질문이 해결되는지",
+          "김서연 님 질문: 이름은 34개라 예시에 모두 들어가지 않음",
+          "‘거동이 불편한 분’ 질문: 비고 예시에 ‘휠체어’가 보일 때 쿼리가 어떻게 달라지는지",
+        ],
+      },
+      retry: {
+        title: "④ 결과가 비면 다시 조회",
+        added: [
+          "조회 결과가 비었거나 실행 오류가 나면, 이전 쿼리와 결과를 알려 주고 다시 쓰게 함 (최대 2번)",
+        ],
+        check: [
+          "아래 ‘실행한 조회’에 시도가 여러 개 쌓이는 모습",
+          "김서연 님 질문에서 두 번째 쿼리가 어떻게 바뀌는지",
+          "결과가 비지는 않았지만 틀린 경우(예: 11월 19일에 3명만 나옴)는 다시 조회하지 않음",
+        ],
+      },
+    };
+
+    const form = document.querySelector("#composer");
+    const questionInput = document.querySelector("#question");
+    const submit = document.querySelector("#submit");
+    const closeButton = document.querySelector("#close");
+    const examples = [...document.querySelectorAll(".example")];
+    const methods = [...document.querySelectorAll("input[name=method]")];
+    const engines = [...document.querySelectorAll("input[name=engine]")];
+    const optExamples = document.querySelector("#opt-examples");
+    const optRetry = document.querySelector("#opt-retry");
+    const guide = document.querySelector("#guide");
+    const output = document.querySelector("#output");
+    const used = document.querySelector("#used");
+    const asked = document.querySelector("#asked");
+    const answer = document.querySelector("#answer");
+    const rawSlot = document.querySelector("#raw-slot");
+    const attemptsBox = document.querySelector("#attempts");
+    const compact = window.matchMedia("(max-width: 800px)");
+    let busy = false;
+    let closed = location.protocol === "file:";
+
+    function make(tag, className, text) {
+      const node = document.createElement(tag);
+      if (className) node.className = className;
+      if (text !== undefined) node.textContent = text;
+      return node;
+    }
+
+    const method = () => methods.find(radio => radio.checked).value;
+    const engine = () => engines.find(radio => radio.checked).value;
+
+    function renderGuide() {
+      const keys = method() === "fixed" ? ["fixed"] : ["free"];
+      if (method() === "free" && optExamples.checked) keys.push("examples");
+      if (method() === "free" && optRetry.checked) keys.push("retry");
+      guide.replaceChildren(...keys.map(key => {
+        const item = GUIDES[key];
+        const box = make("div");
+        const added = make("ul");
+        item.added.forEach(text => added.append(make("li", "", text)));
+        const check = make("ul");
+        item.check.forEach(text => check.append(make("li", "", text)));
+        box.append(make("h4", "", item.title), make("h5", "", "추가된 기능"), added, make("h5", "", "살펴볼 점"), check);
+        return box;
+      }));
+    }
+
+    function setControls() {
+      const off = busy || closed;
+      const free = method() === "free";
+      submit.disabled = off;
+      closeButton.disabled = off;
+      questionInput.disabled = closed;
+      methods.forEach(radio => { radio.disabled = off; });
+      engines.forEach(radio => { radio.disabled = off || !free; });
+      optExamples.disabled = off || !free;
+      optRetry.disabled = off || !free;
+      examples.forEach(button => { button.disabled = off; });
+    }
+
+    function renderAnswer(text, state = "ready") {
+      answer.dataset.state = state;
+      answer.textContent = text;
+    }
+
+    function renderAttempts(attempts) {
+      attemptsBox.hidden = attempts.length === 0;
+      attemptsBox.replaceChildren(...attempts.map((item, index) => {
+        const box = make("div", "attempt");
+        const title = attempts.length > 1 ? "실행한 조회 " + (index + 1) : "실행한 조회";
+        const query = make("pre", "", item.query);
+        const result = make("pre", "", item.result ?? item.error);
+        if (item.error) result.dataset.state = "error";
+        box.append(make("h3", "", title), query, make("h4", "", item.error ? "실행 오류" : "조회 결과"), result);
+        return box;
+      }));
+    }
+
+    async function ask(question, selected = null) {
+      if (busy || closed || !question) return;
+      busy = true;
+      setControls();
+      examples.forEach(button => {
+        if (button === selected) button.setAttribute("aria-current", "true");
+        else button.removeAttribute("aria-current");
+      });
+      const free = method() === "free";
+      const options = {
+        method: method(),
+        engine: engine(),
+        examples: free && optExamples.checked,
+        retry: free && optRetry.checked,
+      };
+      used.hidden = false;
+      used.replaceChildren(
+        make("span", "", free ? "② 자유 쿼리 · " + (options.engine === "sql" ? "SQL" : "pandas") : "① 고정 조회"),
+        ...(options.examples ? [make("span", "", "③ 값 예시")] : []),
+        ...(options.retry ? [make("span", "", "④ 다시 조회")] : []),
+      );
+      asked.hidden = false;
+      asked.textContent = question;
+      attemptsBox.hidden = true;
+      rawSlot.replaceChildren();
+      renderAnswer("질문을 조회로 바꿔 표를 조회하고 있습니다.");
+      if (selected && compact.matches) output.scrollIntoView({ block: "start" });
+
+      try {
+        const response = await fetch("/api/ask", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ question, ...options })
+        });
+        const data = await response.json();
+        if (Array.isArray(data.attempts)) renderAttempts(data.attempts);
+        if (Array.isArray(data.calls) && data.calls.length) rawSlot.replaceChildren(RawView.button(data.calls));
+        if (data.error || !response.ok) renderAnswer(data.error, "error");
+        else renderAnswer(data.answer);
+      } catch {
+        renderAnswer("챗봇에 연결할 수 없습니다. ‘표 챗봇 열기’ 파일을 다시 실행해 주세요.", "error");
+      } finally {
+        busy = false;
+        setControls();
+      }
+    }
+
+    [...methods, optExamples, optRetry].forEach(input => input.addEventListener("change", () => {
+      renderGuide();
+      setControls();
+    }));
+    renderGuide();
+    setControls();
+    form.addEventListener("submit", event => {
+      event.preventDefault();
+      const question = questionInput.value.trim();
+      if (question) ask(question);
+    });
+    examples.forEach(button => button.addEventListener("click", () => {
+      questionInput.value = button.textContent.trim();
+      ask(questionInput.value, button);
+    }));
+    closeButton.addEventListener("click", async () => {
+      busy = true;
+      setControls();
+      try {
+        const response = await fetch("/api/close", { method: "POST" });
+        if (!response.ok) throw new Error();
+        closed = true;
+        asked.hidden = true;
+        used.hidden = true;
+        attemptsBox.hidden = true;
+        rawSlot.replaceChildren();
+        renderAnswer("앱이 종료되었습니다. 다시 사용하려면 ‘표 챗봇 열기’ 파일을 실행해 주세요.");
+      } catch {
+        renderAnswer("앱에 연결할 수 없습니다. 이 탭을 닫아 주세요.", "error");
+      } finally {
+        busy = false;
+        setControls();
+      }
+    });
+    if (closed) {
+      setControls();
+      renderAnswer("이 폴더에서 ‘표 챗봇 열기.pyw’를 더블클릭해 화면을 열어 주세요.");
+    }
+  </script>
+  <style>
+    .raw-open {
+      display: inline-flex; align-items: center; gap: 6px; margin-top: 18px; padding: 8px 14px;
+      border: 1px solid #c9d0de; border-radius: 10px; background: #fff; color: #2a3550;
+      font: inherit; font-size: .875rem; font-weight: 600; cursor: pointer;
+    }
+    .raw-open:hover { border-color: #6b7a99; background: #f7f8fc; }
+    dialog.raw {
+      width: min(1180px, 95vw); max-height: 90vh; padding: 0; border: 0; border-radius: 16px;
+      color: #1e283c; font-family: "Segoe UI", "Malgun Gothic", system-ui, sans-serif; line-height: 1.55;
+    }
+    dialog.raw::backdrop { background: rgb(20 28 45 / .5); }
+    .raw-head {
+      position: sticky; top: 0; z-index: 1; display: flex; align-items: center; justify-content: space-between;
+      gap: 12px; padding: 16px 22px; background: #fff; border-bottom: 1px solid #dce1eb;
+    }
+    .raw-head h2 { margin: 0; font-size: 1.1rem; }
+    .raw-head p { margin: 2px 0 0; color: #5b6880; font-size: .85rem; }
+    .raw-close { border: 1px solid #c9d0de; background: #fff; border-radius: 9px; padding: 7px 13px; font: inherit; cursor: pointer; }
+    .raw-body { display: grid; gap: 18px; padding: 18px 22px 26px; background: #f4f6fa; }
+    .raw-call { background: #fff; border: 1px solid #dce1eb; border-radius: 12px; overflow: hidden; }
+    .raw-call > h3 { margin: 0; padding: 10px 14px; font-size: .95rem; background: #eef1f8; border-bottom: 1px solid #dce1eb; }
+    .raw-cols { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+    .raw-col { min-width: 0; padding: 12px 14px 14px; }
+    .raw-col + .raw-col { border-left: 1px solid #dce1eb; }
+    .raw-col > h4 { margin: 0 0 8px; font-size: .9rem; }
+    .raw-tags { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 8px; }
+    .raw-tags span { padding: 1px 8px; border-radius: 999px; background: #eef1f8; color: #3b4863; font-size: .78rem; }
+    .raw-tags span.on { background: #e8e1ff; color: #4a2fa0; }
+    .raw-part { margin-top: 8px; border: 1px solid #e3e7ef; border-radius: 9px; }
+    .raw-part > summary { padding: 7px 10px; font-size: .84rem; font-weight: 700; cursor: pointer; color: #2a3550; }
+    .raw-part[open] > summary { border-bottom: 1px solid #e3e7ef; }
+    .raw-part > div { padding: 8px 10px; display: grid; gap: 8px; }
+    .raw-block { border-left: 3px solid #c9d0de; padding-left: 9px; }
+    .raw-block.user { border-color: #8fb0ef; }
+    .raw-block.assistant { border-color: #b39ce8; }
+    .raw-block.tool { border-color: #e9b25c; }
+    .raw-label { font-size: .78rem; font-weight: 700; color: #5b6880; }
+    dialog.raw pre {
+      margin: 3px 0 0; padding: 8px 10px; max-height: 360px; overflow: auto; background: #f6f7fb; border-radius: 7px;
+      white-space: pre-wrap; overflow-wrap: anywhere; font: .78rem/1.55 Consolas, "Malgun Gothic", monospace;
+    }
+    @media (max-width: 800px) {
+      .raw-cols { grid-template-columns: minmax(0, 1fr); }
+      .raw-col + .raw-col { border-left: 0; border-top: 1px solid #dce1eb; }
+    }
+  </style>
+  <script>
+    const RawView = (() => {
+      const make = (tag, className, text) => {
+        const node = document.createElement(tag);
+        if (className) node.className = className;
+        if (text !== undefined) node.textContent = text;
+        return node;
+      };
+      const pretty = value => typeof value === "string" ? value : JSON.stringify(value, null, 2);
+      const part = (title, children, open = false) => {
+        const box = make("details", "raw-part");
+        box.open = open;
+        box.append(make("summary", "", title));
+        const inner = make("div");
+        inner.append(...children);
+        box.append(inner);
+        return box;
+      };
+      const block = (kind, label, text) => {
+        const box = make("div", "raw-block " + kind);
+        box.append(make("div", "raw-label", label), make("pre", "", text));
+        return box;
+      };
+      const contentBlocks = (role, content) => {
+        const who = role === "user" ? "user (앱이 보낸 내용)" : "assistant (Claude의 답)";
+        if (typeof content === "string") return [block(role, who, content)];
+        return content.map(item => {
+          if (item.type === "text") return block(role, who + " · 글", item.text);
+          if (item.type === "tool_use") return block("tool", "assistant · 도구 사용 요청: " + item.name, pretty(item.input));
+          if (item.type === "tool_result") {
+            const text = Array.isArray(item.content) ? item.content.map(c => c.text || pretty(c)).join("\n") : pretty(item.content);
+            return block("tool", "user · 도구 실행 결과 (앱이 실행)", text);
+          }
+          return block(role, who + " · " + item.type, pretty(item));
+        });
+      };
+      const tags = list => {
+        const box = make("div", "raw-tags");
+        list.forEach(([text, on]) => box.append(make("span", on ? "on" : "", text)));
+        return box;
+      };
+      const requestColumn = request => {
+        const col = make("div", "raw-col");
+        col.append(make("h4", "", "요청 (앱 → Claude)"));
+        col.append(tags([
+          ["model: " + request.model, false],
+          ["system " + (request.system ? "있음" : "없음"), Boolean(request.system)],
+          ["tools " + (request.tools ? request.tools.length + "개" : "없음"), Boolean(request.tools)],
+          ["messages " + request.messages.length + "개", false],
+        ]));
+        if (request.system) col.append(part("system (지침)", [make("pre", "", request.system)]));
+        if (request.tools) {
+          col.append(part("tools (쓸 수 있는 도구)", request.tools.map(tool =>
+            block("tool", tool.name + " · " + (tool.description || ""), pretty(tool.input_schema))
+          )));
+        }
+        const messages = request.messages.flatMap(message => contentBlocks(message.role, message.content));
+        col.append(part("messages (대화 내용)", messages, true));
+        col.append(part("JSON 전체", [make("pre", "", JSON.stringify(request, null, 2))]));
+        return col;
+      };
+      const responseColumn = response => {
+        const col = make("div", "raw-col");
+        col.append(make("h4", "", "응답 (Claude → 앱)"));
+        const usage = response.usage || {};
+        col.append(tags([
+          ["stop_reason: " + response.stop_reason, response.stop_reason === "tool_use"],
+          ["입력 토큰 " + (usage.input_tokens ?? "-"), false],
+          ["출력 토큰 " + (usage.output_tokens ?? "-"), false],
+        ]));
+        col.append(part("content (응답 내용)", contentBlocks("assistant", response.content || []), true));
+        col.append(part("JSON 전체", [make("pre", "", JSON.stringify(response, null, 2))]));
+        return col;
+      };
+      let dialog;
+      function open(calls) {
+        if (!dialog) {
+          dialog = make("dialog", "raw");
+          dialog.addEventListener("click", event => { if (event.target === dialog) dialog.close(); });
+          document.body.append(dialog);
+        }
+        const head = make("div", "raw-head");
+        const titles = make("div");
+        titles.append(make("h2", "", "Claude에게 보낸 내용"), make("p", "", "질문 하나에 Claude를 " + calls.length + "번 호출했습니다. 위에서부터 순서대로입니다."));
+        const close = make("button", "raw-close", "닫기");
+        close.type = "button";
+        close.addEventListener("click", () => dialog.close());
+        head.append(titles, close);
+        const body = make("div", "raw-body");
+        calls.forEach((call, index) => {
+          const card = make("section", "raw-call");
+          const cols = make("div", "raw-cols");
+          cols.append(requestColumn(call.request), responseColumn(call.response));
+          card.append(make("h3", "", (index + 1) + "번째 호출"), cols);
+          body.append(card);
+        });
+        dialog.replaceChildren(head, body);
+        dialog.showModal();
+        dialog.scrollTop = 0;
+      }
+      function button(calls) {
+        const node = make("button", "raw-open", "Claude에게 보낸 내용 보기 (호출 " + calls.length + "번)");
+        node.type = "button";
+        node.addEventListener("click", () => open(calls));
+        return node;
+      }
+      return { open, button };
+    })();
+  </script>
+</body>
+</html>

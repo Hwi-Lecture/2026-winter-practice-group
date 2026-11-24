@@ -1,0 +1,9 @@
+보낸 날짜: 2026-11-16 17:10 +09:00
+보낸 사람: 윤하늘 <haneul@example.org>
+받는 사람: 이유진 <yujin@example.org>
+제목: Re: 워크숍에 초등학생도 참여할 수 있나요?
+Message-ID: <mail-008@example.org>
+In-Reply-To: <mail-007@example.org>
+References: <mail-007@example.org>
+
+이번 수업은 중학생 이상을 대상으로 준비하고 있습니다. 보호자가 동행해도 초등학생은 실습 참가 신청을 받기 어렵습니다. 보호자 본인만 참여하신다면 한 분으로 신청해 주세요.

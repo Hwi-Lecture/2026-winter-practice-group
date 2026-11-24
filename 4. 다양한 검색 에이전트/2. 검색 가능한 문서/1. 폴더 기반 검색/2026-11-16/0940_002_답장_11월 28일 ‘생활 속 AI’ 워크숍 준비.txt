@@ -1,0 +1,9 @@
+보낸 날짜: 2026-11-16 09:40 +09:00
+보낸 사람: 박소연 <soyeon@example.org>
+받는 사람: 서지민 <jimin@example.org>, 윤하늘 <haneul@example.org>
+제목: Re: 11월 28일 ‘생활 속 AI’ 워크숍 준비
+Message-ID: <mail-002@example.org>
+In-Reply-To: <mail-001@example.org>
+References: <mail-001@example.org>
+
+배움실 A에 24석이 있지만 운영 인력 자리를 빼면 참가자 좌석은 20석입니다. 시설 담당자에게 금요일까지 음향과 전기 점검 결과를 달라고 했습니다.

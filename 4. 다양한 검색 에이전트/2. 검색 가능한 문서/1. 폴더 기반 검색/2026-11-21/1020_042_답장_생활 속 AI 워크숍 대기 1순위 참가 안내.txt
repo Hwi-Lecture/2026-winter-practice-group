@@ -1,0 +1,9 @@
+보낸 날짜: 2026-11-21 10:20 +09:00
+보낸 사람: 이유진 <yujin@example.org>
+받는 사람: 윤하늘 <haneul@example.org>
+제목: Re: [생활 속 AI 워크숍] 대기 1순위 참가 안내
+Message-ID: <mail-042@example.org>
+In-Reply-To: <mail-041@example.org>
+References: <mail-041@example.org>
+
+안내 감사합니다. 저 혼자 참석하겠습니다. 노트북과 충전기도 챙겨 가겠습니다.

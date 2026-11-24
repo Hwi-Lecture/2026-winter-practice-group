@@ -1,0 +1,9 @@
+보낸 날짜: 2026-11-20 19:35 +09:00
+보낸 사람: 정유나 <yuna@example.org>
+받는 사람: 윤하늘 <haneul@example.org>
+제목: Re: 개인 노트북 없이 참가할 수 있을까요?
+Message-ID: <mail-039@example.org>
+In-Reply-To: <mail-022@example.org>
+References: <mail-011@example.org> <mail-012@example.org> <mail-021@example.org> <mail-022@example.org>
+
+가족 일정이 생겨 11월 28일에 참석하기 어려워졌습니다. 참가 신청과 예약했던 대여 노트북을 함께 취소해 주세요.

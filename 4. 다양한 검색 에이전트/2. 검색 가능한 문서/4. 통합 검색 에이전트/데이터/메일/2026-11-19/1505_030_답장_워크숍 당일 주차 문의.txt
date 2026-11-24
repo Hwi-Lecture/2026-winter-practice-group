@@ -1,0 +1,9 @@
+보낸 날짜: 2026-11-19 15:05 +09:00
+보낸 사람: 한도윤 <doyun@example.org>
+받는 사람: 윤하늘 <haneul@example.org>
+제목: Re: 워크숍 당일 주차 문의
+Message-ID: <mail-030@example.org>
+In-Reply-To: <mail-014@example.org>
+References: <mail-013@example.org> <mail-014@example.org>
+
+장소가 3층으로 바뀌었다는 안내를 받았습니다. 차량 번호도 3층 접수대에서 등록하는 건가요?

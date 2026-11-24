@@ -1,0 +1,9 @@
+보낸 날짜: 2026-11-17 14:12 +09:00
+보낸 사람: 윤하늘 <haneul@example.org>
+받는 사람: 한도윤 <doyun@example.org>
+제목: Re: 워크숍 당일 주차 문의
+Message-ID: <mail-014@example.org>
+In-Reply-To: <mail-013@example.org>
+References: <mail-013@example.org>
+
+학당 건물 지하 주차장은 접수대에서 차량 번호를 등록하시면 2시간 무료입니다. 만차일 때는 풍덕천 공영주차장을 이용해 주세요. 공영주차장 요금은 이용자 부담입니다.

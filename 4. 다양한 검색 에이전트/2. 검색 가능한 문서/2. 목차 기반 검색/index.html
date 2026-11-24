@@ -1,0 +1,526 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>카본매트 온돌 KME · 설명서 챗봇</title>
+  <style>
+    :root {
+      font-family: "Pretendard", "Noto Sans KR", "Malgun Gothic", system-ui, sans-serif;
+      color: #192941;
+      background: #f0f4fa;
+      line-height: 1.65;
+      --blue: #2455c3;
+      --navy: #182a4c;
+      --muted: #51637b;
+      --border: #dbe4f1;
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; }
+    a { color: #214eaf; text-underline-offset: .22em; }
+    button, textarea { font: inherit; }
+    button { cursor: pointer; }
+    :focus-visible { outline: 3px solid #4176e7; outline-offset: 4px; }
+    .top { background: #fff; border-bottom: 1px solid var(--border); }
+    .top-content {
+      max-width: 1240px; padding: 16px 32px; margin: auto;
+      display: flex; gap: 12px; align-items: center; font-weight: 750;
+    }
+    .close-app {
+      margin-left: auto; border: 1px solid var(--border); background: #fff; color: var(--navy);
+      border-radius: 10px; padding: 7px 13px; font-size: .875rem; font-weight: 600;
+    }
+    .close-app:hover { border-color: var(--blue); color: var(--blue); }
+    .close-app:disabled { opacity: .58; cursor: default; }
+    .mark {
+      display: grid; place-items: center; width: 36px; height: 36px;
+      border-radius: 10px; color: #fff; background: var(--blue); font-size: .94rem;
+    }
+    .frame {
+      max-width: 1240px; margin: auto; padding: 36px 32px 48px;
+      display: grid; grid-template-columns: minmax(0, 1fr) minmax(290px, 355px);
+      grid-template-areas: "chat tests";
+      gap: 24px; align-items: start;
+    }
+    .side {
+      grid-area: tests; padding: 22px; border-radius: 18px;
+      background: #fff; border: 1px solid var(--border);
+    }
+    .side h2 { font-size: 1.06rem; margin: 0 0 12px; }
+    .side p { font-size: .88rem; color: var(--muted); margin: 10px 0 0; }
+    .side ol { margin: 0; padding-left: 1.4em; font-size: .93rem; }
+    .side li + li { margin-top: 7px; }
+    .side hr { border: 0; border-top: 1px solid var(--border); margin: 22px 0; }
+    .side a { font-size: .9rem; font-weight: 650; }
+    .test-list { display: grid; gap: 8px; }
+    .test-card {
+      margin: 0; padding: 0; border: 1px solid var(--border);
+      border-radius: 10px; background: #f8faff;
+    }
+    .test-card summary { padding: 10px 12px; overflow-wrap: anywhere; }
+    .test-card[open] summary { border-bottom: 1px solid var(--border); }
+    .test-content { padding: 12px; }
+    .test-content h3 { font-size: .85rem; margin: 13px 0 3px; }
+    .test-content p { margin: 0; overflow-wrap: anywhere; }
+    .test-content .pages { margin-top: 6px; }
+    .test-send {
+      color: #214eaf; background: #eaf1ff; border: 1px solid #c5d6f6;
+      border-radius: 8px; padding: 5px 11px; font-size: .9rem; font-weight: 700;
+    }
+    .test-send:hover { background: #dce8ff; }
+    .test-send:disabled { opacity: .6; cursor: wait; }
+    .workspace {
+      grid-area: chat;
+      overflow: hidden; background: #fff; border: 1px solid var(--border);
+      border-radius: 20px; box-shadow: 0 14px 36px #24416b0d;
+    }
+    .hero {
+      padding: clamp(25px, 5vw, 48px); color: #fff;
+      background: linear-gradient(116deg, #162848 16%, #1d3870 74%, #284ea1);
+    }
+    .model { margin: 0 0 6px; color: #ccddfb; font-size: .88rem; font-weight: 700; }
+    h1 { margin: 0; font-size: clamp(1.6rem, 4.5vw, 2.4rem); line-height: 1.28; letter-spacing: -.045em; }
+    .hero p:last-child { margin: 12px 0 0; color: #e1eafd; }
+    .chat { padding: clamp(18px, 4vw, 36px); min-height: 320px; }
+    .examples h2 { font-size: 1rem; margin: 0 0 12px; }
+    .examples-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+    .example {
+      text-align: left; background: #f8faff; color: var(--navy); padding: 14px 16px;
+      border: 1px solid var(--border); border-radius: 10px; font-size: .93rem; font-weight: 650;
+    }
+    .example:hover { background: #eaf1ff; border-color: #a8beed; }
+    .message { margin: 0 0 24px; display: flex; flex-direction: column; gap: 7px; }
+    .message:last-child { margin-bottom: 0; }
+    .message.user { align-items: end; }
+    .speaker { color: var(--muted); font-size: .84rem; font-weight: 700; }
+    .bubble { white-space: pre-wrap; overflow-wrap: anywhere; margin: 0; }
+    .user .bubble { padding: 10px 16px; background: #eaf1ff; border-radius: 14px 14px 4px 14px; }
+    .result { color: var(--navy); background: #f8faff; padding: 16px; border: 1px solid var(--border); border-radius: 4px 14px 14px; }
+    .result.error { border-color: #f1bfbf; color: #8c2424; background: #fff7f7; }
+    .pages { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 10px; margin-top: 13px; font-size: .89rem; }
+    .pages strong { color: var(--muted); font-size: .85rem; }
+    .pages a { background: #eaf1ff; padding: 2px 9px; border-radius: 6px; text-decoration: none; }
+    .pages a:hover { text-decoration: underline; }
+    details { margin-top: 12px; padding-top: 10px; border-top: 1px solid var(--border); }
+    summary { cursor: pointer; color: #284a85; font-size: .91rem; font-weight: 700; }
+    blockquote {
+      margin: 11px 0 0; border-left: 3px solid #afc4f3; padding-left: 12px;
+      overflow-wrap: anywhere; font-size: .91rem;
+    }
+    blockquote p { margin: 4px 0 0; }
+    form { padding: 18px clamp(18px, 4vw, 36px) 24px; border-top: 1px solid var(--border); background: #fbfcff; }
+    label { display: block; margin-bottom: 6px; font-size: .9rem; font-weight: 700; }
+    .input-row { display: flex; gap: 10px; align-items: end; }
+    textarea {
+      width: 100%; min-width: 0; min-height: 52px; max-height: 240px; resize: vertical;
+      border: 1px solid #adbed7; border-radius: 10px; background: #fff; padding: 11px 13px; color: var(--navy);
+    }
+    .submit {
+      background: var(--blue); color: #fff; font-weight: 750; border: 0; border-radius: 10px;
+      padding: 0 17px; min-height: 52px; white-space: nowrap;
+    }
+    .submit:hover { background: #1943a2; }
+    .submit:disabled { cursor: wait; background: #506b9f; }
+    .hint { margin: 8px 0 0; color: var(--muted); font-size: .81rem; }
+    @media (max-width: 760px) {
+      .top-content { padding-inline: 18px; }
+      .frame { display: flex; flex-direction: column; padding: 18px 14px 32px; gap: 15px; }
+      .side, .workspace { width: 100%; }
+      .side { position: static; order: 2; }
+      .chat { min-height: 0; }
+    }
+    @media (max-width: 450px) {
+      .examples-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <header class="top">
+    <div class="top-content"><span class="mark" aria-hidden="true">K</span> 귀뚜라미 카본매트 온돌<button class="close-app" id="close" type="button">앱 종료</button></div>
+  </header>
+
+  <main class="frame">
+    <aside class="side" aria-labelledby="search-heading">
+      <h2 id="search-heading">테스트 질문 8문항</h2>
+      <div id="test-list" class="test-list">
+        <p role="status">테스트 문항을 불러오는 중입니다…</p>
+      </div>
+      <hr>
+      <h2>검색 방식</h2>
+      <ol>
+        <li>페이지별 목록에서 관련 쪽을 찾습니다.</li>
+        <li>선택한 쪽의 본문을 읽고 답합니다.</li>
+      </ol>
+      <p>설명서에서 근거를 찾지 못하면 확인할 수 없다고 안내합니다.</p>
+      <hr>
+      <h2>참고 문서</h2>
+      <a href="/manual.pdf" target="_blank" rel="noopener">27년형 KME 사용설명서 PDF</a>
+      <p>KME-21 · KME-22 · KME-23</p>
+    </aside>
+
+    <section class="workspace" aria-labelledby="title">
+      <div class="hero">
+        <p class="model">카본매트 온돌 KME</p>
+        <h1 id="title">사용설명서 챗봇</h1>
+        <p>제품 사용법, 관리 방법, 오류 코드가 궁금할 때 질문해 보세요.</p>
+      </div>
+      <div class="chat">
+        <section id="examples" class="examples" aria-labelledby="examples-heading">
+          <h2 id="examples-heading">예시 질문</h2>
+          <div class="examples-grid">
+            <button type="button" class="example">좌우 온도를 어떻게 맞추나요?</button>
+            <button type="button" class="example">취침기능과 수면기능은 뭐가 다른가요?</button>
+            <button type="button" class="example">세탁기와 건조기를 사용해도 되나요?</button>
+            <button type="button" class="example">E2 오류가 뜨면 어떻게 해야 하나요?</button>
+          </div>
+        </section>
+        <div id="messages" role="log" aria-label="질문과 답변"></div>
+      </div>
+      <form id="question-form">
+        <label for="question">질문 입력</label>
+        <div class="input-row">
+          <textarea id="question" rows="1" maxlength="1000" required placeholder="예: 리모컨을 어떻게 연결하나요?" aria-describedby="hint"></textarea>
+          <button class="submit" type="submit">질문하기</button>
+        </div>
+        <p id="hint" class="hint">Enter로 전송 · Shift+Enter로 줄바꿈</p>
+      </form>
+    </section>
+  </main>
+
+  <script>
+    const form = document.getElementById('question-form');
+    const question = document.getElementById('question');
+    const submit = form.querySelector('.submit');
+    const messages = document.getElementById('messages');
+    const examples = document.getElementById('examples');
+    const testList = document.getElementById('test-list');
+
+    function element(tag, className, text) {
+      const item = document.createElement(tag);
+      if (className) item.className = className;
+      if (text) item.textContent = text;
+      return item;
+    }
+
+    function pageLink(page, label) {
+      const link = element('a', '', label);
+      link.href = '/manual.pdf#page=' + page;
+      link.target = '_blank';
+      link.rel = 'noopener';
+      return link;
+    }
+
+    function sendQuestion(text) {
+      if (submit.disabled) return;
+      question.value = text;
+      form.requestSubmit();
+    }
+
+    function showTest(test, index) {
+      const card = element('details', 'test-card');
+      card.name = 'test-card';
+      card.addEventListener('toggle', () => {
+        if (!card.open) return;
+        for (const other of document.querySelectorAll('details.test-card[open]')) {
+          if (other !== card) other.open = false;
+        }
+      });
+      const summary = element('summary', '', (index + 1) + '. 질문 · ' + test.question);
+      const content = element('div', 'test-content');
+      const send = element('button', 'test-send', '이 질문 보내기');
+      send.type = 'button';
+      send.disabled = submit.disabled;
+      send.setAttribute('aria-label', (index + 1) + '번 질문 보내기');
+      send.addEventListener('click', () => sendQuestion(test.question));
+      content.append(
+        send,
+        element('h3', '', '예상답변'),
+        element('p', '', test.expected),
+        element('h3', '', '관련 문서'),
+      );
+      if (test.related !== test.pages.map(page => page + '쪽').join(', ')) {
+        content.append(element('p', '', test.related));
+      }
+      if (test.pages.length) {
+        const links = element('div', 'pages');
+        for (const page of test.pages) links.append(pageLink(page, '설명서 ' + page + '쪽'));
+        content.append(links);
+      }
+      card.append(summary, content);
+      return card;
+    }
+
+    async function loadTests() {
+      try {
+        const response = await fetch('/api/test-questions');
+        if (!response.ok) throw new Error();
+        const tests = await response.json();
+        testList.replaceChildren(...tests.map(showTest));
+      } catch {
+        testList.replaceChildren(element('p', '', '테스트 문항을 불러오지 못했습니다. 페이지를 새로고침해 주세요.'));
+      }
+    }
+
+    function setPending(pending) {
+      submit.disabled = pending;
+      for (const button of testList.querySelectorAll('.test-send')) button.disabled = pending;
+    }
+
+    function addMessage(user, text) {
+      const message = element('article', user ? 'message user' : 'message');
+      const body = element('div', user ? '' : 'result');
+      body.append(element('p', 'bubble', text));
+      message.append(element('span', 'speaker', user ? '내 질문' : '설명서 챗봇'), body);
+      messages.append(message);
+      return body;
+    }
+
+    function showAnswer(body, result) {
+      body.replaceChildren(element('p', 'bubble', result.answer));
+      const raw = Array.isArray(result.calls) && result.calls.length ? RawView.button(result.calls) : null;
+      if (result.pages.length) {
+        const pages = element('div', 'pages');
+        pages.append(element('strong', '', '탐색한 페이지'));
+        for (const { page, title } of result.pages) {
+          const link = pageLink(page, page + '쪽');
+          link.title = title;
+          link.setAttribute('aria-label', page + '쪽 · ' + title + ' (새 탭)');
+          pages.append(link);
+        }
+        body.append(pages);
+      }
+      if (result.citations.length) {
+        const citations = element('details');
+        citations.append(element('summary', '', '답변 근거 원문 보기'));
+        for (const { page, title, quote } of result.citations) {
+          const excerpt = element('blockquote');
+          excerpt.append(pageLink(page, page + '쪽 · ' + title), element('p', '', quote));
+          citations.append(excerpt);
+        }
+        body.append(citations);
+      }
+      if (raw) body.append(raw);
+    }
+
+    for (const button of examples.querySelectorAll('button')) {
+      button.addEventListener('click', () => sendQuestion(button.textContent));
+    }
+    loadTests();
+
+    question.addEventListener('keydown', event => {
+      if (event.key !== 'Enter' || event.shiftKey || event.isComposing || event.keyCode === 229) return;
+      event.preventDefault();
+      form.requestSubmit();
+    });
+
+    form.addEventListener('submit', async event => {
+      event.preventDefault();
+      const input = question.value.trim();
+      if (!input || submit.disabled) return;
+
+      examples.hidden = true;
+      question.value = '';
+      setPending(true);
+      addMessage(true, input);
+      const body = addMessage(false, '관련 페이지를 찾고 설명서 본문을 확인하는 중입니다…');
+      body.scrollIntoView({ block: 'nearest' });
+      try {
+        const response = await fetch('/api/ask', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ question: input }),
+        });
+        const result = await response.json();
+        if (!response.ok) throw new Error(result.error || '질문을 보내지 못했습니다. 다시 시도해 주세요.');
+        showAnswer(body, result);
+      } catch (error) {
+        body.classList.add('error');
+        const message = error instanceof TypeError
+          ? '챗봇에 연결할 수 없습니다. ‘설명서 챗봇 열기’ 파일을 다시 실행해 주세요.'
+          : error.message || '질문을 보내지 못했습니다. 다시 시도해 주세요.';
+        body.replaceChildren(element('p', 'bubble', message));
+        if (!question.value) question.value = input;
+      } finally {
+        setPending(false);
+        body.closest('article').scrollIntoView({ block: 'nearest' });
+      }
+    });
+    const closeButton = document.getElementById('close');
+    closeButton.addEventListener('click', async () => {
+      closeButton.disabled = true;
+      try {
+        const response = await fetch('/api/close', { method: 'POST' });
+        if (!response.ok) throw new Error();
+        setPending(true);
+        question.disabled = true;
+        examples.hidden = true;
+        addMessage(false, '앱이 종료되었습니다. 다시 사용하려면 ‘설명서 챗봇 열기’ 파일을 실행해 주세요.');
+      } catch {
+        closeButton.disabled = false;
+        addMessage(false, '앱에 연결할 수 없습니다. 이 탭을 닫아 주세요.');
+      }
+    });
+    if (location.protocol === 'file:') {
+      setPending(true);
+      closeButton.disabled = true;
+      addMessage(false, '이 폴더에서 ‘설명서 챗봇 열기.pyw’를 더블클릭해 화면을 열어 주세요.');
+    }
+  </script>
+  <style>
+    .raw-open {
+      display: inline-flex; align-items: center; gap: 6px; margin-top: 18px; padding: 8px 14px;
+      border: 1px solid #c9d0de; border-radius: 10px; background: #fff; color: #2a3550;
+      font: inherit; font-size: .875rem; font-weight: 600; cursor: pointer;
+    }
+    .raw-open:hover { border-color: #6b7a99; background: #f7f8fc; }
+    dialog.raw {
+      width: min(1180px, 95vw); max-height: 90vh; padding: 0; border: 0; border-radius: 16px;
+      color: #1e283c; font-family: "Segoe UI", "Malgun Gothic", system-ui, sans-serif; line-height: 1.55;
+    }
+    dialog.raw::backdrop { background: rgb(20 28 45 / .5); }
+    .raw-head {
+      position: sticky; top: 0; z-index: 1; display: flex; align-items: center; justify-content: space-between;
+      gap: 12px; padding: 16px 22px; background: #fff; border-bottom: 1px solid #dce1eb;
+    }
+    .raw-head h2 { margin: 0; font-size: 1.1rem; }
+    .raw-head p { margin: 2px 0 0; color: #5b6880; font-size: .85rem; }
+    .raw-close { border: 1px solid #c9d0de; background: #fff; border-radius: 9px; padding: 7px 13px; font: inherit; cursor: pointer; }
+    .raw-body { display: grid; gap: 18px; padding: 18px 22px 26px; background: #f4f6fa; }
+    .raw-call { background: #fff; border: 1px solid #dce1eb; border-radius: 12px; overflow: hidden; }
+    .raw-call > h3 { margin: 0; padding: 10px 14px; font-size: .95rem; background: #eef1f8; border-bottom: 1px solid #dce1eb; }
+    .raw-cols { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+    .raw-col { min-width: 0; padding: 12px 14px 14px; }
+    .raw-col + .raw-col { border-left: 1px solid #dce1eb; }
+    .raw-col > h4 { margin: 0 0 8px; font-size: .9rem; }
+    .raw-tags { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 8px; }
+    .raw-tags span { padding: 1px 8px; border-radius: 999px; background: #eef1f8; color: #3b4863; font-size: .78rem; }
+    .raw-tags span.on { background: #e8e1ff; color: #4a2fa0; }
+    .raw-part { margin-top: 8px; border: 1px solid #e3e7ef; border-radius: 9px; }
+    .raw-part > summary { padding: 7px 10px; font-size: .84rem; font-weight: 700; cursor: pointer; color: #2a3550; }
+    .raw-part[open] > summary { border-bottom: 1px solid #e3e7ef; }
+    .raw-part > div { padding: 8px 10px; display: grid; gap: 8px; }
+    .raw-block { border-left: 3px solid #c9d0de; padding-left: 9px; }
+    .raw-block.user { border-color: #8fb0ef; }
+    .raw-block.assistant { border-color: #b39ce8; }
+    .raw-block.tool { border-color: #e9b25c; }
+    .raw-label { font-size: .78rem; font-weight: 700; color: #5b6880; }
+    dialog.raw pre {
+      margin: 3px 0 0; padding: 8px 10px; max-height: 360px; overflow: auto; background: #f6f7fb; border-radius: 7px;
+      white-space: pre-wrap; overflow-wrap: anywhere; font: .78rem/1.55 Consolas, "Malgun Gothic", monospace;
+    }
+    @media (max-width: 800px) {
+      .raw-cols { grid-template-columns: minmax(0, 1fr); }
+      .raw-col + .raw-col { border-left: 0; border-top: 1px solid #dce1eb; }
+    }
+  </style>
+  <script>
+    const RawView = (() => {
+      const make = (tag, className, text) => {
+        const node = document.createElement(tag);
+        if (className) node.className = className;
+        if (text !== undefined) node.textContent = text;
+        return node;
+      };
+      const pretty = value => typeof value === "string" ? value : JSON.stringify(value, null, 2);
+      const part = (title, children, open = false) => {
+        const box = make("details", "raw-part");
+        box.open = open;
+        box.append(make("summary", "", title));
+        const inner = make("div");
+        inner.append(...children);
+        box.append(inner);
+        return box;
+      };
+      const block = (kind, label, text) => {
+        const box = make("div", "raw-block " + kind);
+        box.append(make("div", "raw-label", label), make("pre", "", text));
+        return box;
+      };
+      const contentBlocks = (role, content) => {
+        const who = role === "user" ? "user (앱이 보낸 내용)" : "assistant (Claude의 답)";
+        if (typeof content === "string") return [block(role, who, content)];
+        return content.map(item => {
+          if (item.type === "text") return block(role, who + " · 글", item.text);
+          if (item.type === "tool_use") return block("tool", "assistant · 도구 사용 요청: " + item.name, pretty(item.input));
+          if (item.type === "tool_result") {
+            const text = Array.isArray(item.content) ? item.content.map(c => c.text || pretty(c)).join("\n") : pretty(item.content);
+            return block("tool", "user · 도구 실행 결과 (앱이 실행)", text);
+          }
+          return block(role, who + " · " + item.type, pretty(item));
+        });
+      };
+      const tags = list => {
+        const box = make("div", "raw-tags");
+        list.forEach(([text, on]) => box.append(make("span", on ? "on" : "", text)));
+        return box;
+      };
+      const requestColumn = request => {
+        const col = make("div", "raw-col");
+        col.append(make("h4", "", "요청 (앱 → Claude)"));
+        col.append(tags([
+          ["model: " + request.model, false],
+          ["system " + (request.system ? "있음" : "없음"), Boolean(request.system)],
+          ["tools " + (request.tools ? request.tools.length + "개" : "없음"), Boolean(request.tools)],
+          ["messages " + request.messages.length + "개", false],
+        ]));
+        if (request.system) col.append(part("system (지침)", [make("pre", "", request.system)]));
+        if (request.tools) {
+          col.append(part("tools (쓸 수 있는 도구)", request.tools.map(tool =>
+            block("tool", tool.name + " · " + (tool.description || ""), pretty(tool.input_schema))
+          )));
+        }
+        const messages = request.messages.flatMap(message => contentBlocks(message.role, message.content));
+        col.append(part("messages (대화 내용)", messages, true));
+        col.append(part("JSON 전체", [make("pre", "", JSON.stringify(request, null, 2))]));
+        return col;
+      };
+      const responseColumn = response => {
+        const col = make("div", "raw-col");
+        col.append(make("h4", "", "응답 (Claude → 앱)"));
+        const usage = response.usage || {};
+        col.append(tags([
+          ["stop_reason: " + response.stop_reason, response.stop_reason === "tool_use"],
+          ["입력 토큰 " + (usage.input_tokens ?? "-"), false],
+          ["출력 토큰 " + (usage.output_tokens ?? "-"), false],
+        ]));
+        col.append(part("content (응답 내용)", contentBlocks("assistant", response.content || []), true));
+        col.append(part("JSON 전체", [make("pre", "", JSON.stringify(response, null, 2))]));
+        return col;
+      };
+      let dialog;
+      function open(calls) {
+        if (!dialog) {
+          dialog = make("dialog", "raw");
+          dialog.addEventListener("click", event => { if (event.target === dialog) dialog.close(); });
+          document.body.append(dialog);
+        }
+        const head = make("div", "raw-head");
+        const titles = make("div");
+        titles.append(make("h2", "", "Claude에게 보낸 내용"), make("p", "", "질문 하나에 Claude를 " + calls.length + "번 호출했습니다. 위에서부터 순서대로입니다."));
+        const close = make("button", "raw-close", "닫기");
+        close.type = "button";
+        close.addEventListener("click", () => dialog.close());
+        head.append(titles, close);
+        const body = make("div", "raw-body");
+        calls.forEach((call, index) => {
+          const card = make("section", "raw-call");
+          const cols = make("div", "raw-cols");
+          cols.append(requestColumn(call.request), responseColumn(call.response));
+          card.append(make("h3", "", (index + 1) + "번째 호출"), cols);
+          body.append(card);
+        });
+        dialog.replaceChildren(head, body);
+        dialog.showModal();
+        dialog.scrollTop = 0;
+      }
+      function button(calls) {
+        const node = make("button", "raw-open", "Claude에게 보낸 내용 보기 (호출 " + calls.length + "번)");
+        node.type = "button";
+        node.addEventListener("click", () => open(calls));
+        return node;
+      }
+      return { open, button };
+    })();
+  </script>
+</body>
+</html>

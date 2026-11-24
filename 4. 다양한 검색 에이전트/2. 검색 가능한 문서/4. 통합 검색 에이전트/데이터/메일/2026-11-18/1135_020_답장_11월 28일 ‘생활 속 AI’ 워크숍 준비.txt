@@ -1,0 +1,9 @@
+보낸 날짜: 2026-11-18 11:35 +09:00
+보낸 사람: 윤하늘 <haneul@example.org>
+받는 사람: 서지민 <jimin@example.org>, 박소연 <soyeon@example.org>
+제목: Re: 11월 28일 ‘생활 속 AI’ 워크숍 준비
+Message-ID: <mail-020@example.org>
+In-Reply-To: <mail-019@example.org>
+References: <mail-001@example.org> <mail-002@example.org> <mail-017@example.org> <mail-018@example.org> <mail-019@example.org>
+
+오전 11시 30분에 신청 페이지를 수정했고 기존 신청자 15명에게 장소 변경 메일을 보냈습니다. 변경된 장소는 3층 모임실 B입니다. 오래된 공지 링크로 접속해도 수정된 페이지가 뜹니다.

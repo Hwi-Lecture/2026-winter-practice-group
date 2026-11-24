@@ -1,0 +1,9 @@
+보낸 날짜: 2026-11-16 11:15 +09:00
+보낸 사람: 윤하늘 <haneul@example.org>
+받는 사람: 서지민 <jimin@example.org>
+제목: Re: 11월 28일 ‘생활 속 AI’ 워크숍 준비
+Message-ID: <mail-004@example.org>
+In-Reply-To: <mail-001@example.org>
+References: <mail-001@example.org>
+
+신청 화면을 만들었습니다. 참가비는 무료로 표시했고, 20명이 차면 대기 신청으로 전환하도록 설정했습니다. 신청 완료 화면에 적힌 장소도 배움실 A입니다.

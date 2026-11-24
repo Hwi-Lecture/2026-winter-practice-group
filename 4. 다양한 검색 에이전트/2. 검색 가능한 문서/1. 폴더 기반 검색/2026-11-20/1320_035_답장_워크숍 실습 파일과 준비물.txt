@@ -1,0 +1,9 @@
+보낸 날짜: 2026-11-20 13:20 +09:00
+보낸 사람: 박소연 <soyeon@example.org>
+받는 사람: 김민준 <minjun@example.org>
+제목: Re: 워크숍 실습 파일과 준비물
+Message-ID: <mail-035@example.org>
+In-Reply-To: <mail-034@example.org>
+References: <mail-003@example.org> <mail-015@example.org> <mail-025@example.org> <mail-034@example.org>
+
+표지 시안 확인했습니다. 접수 시작 시각인 오후 1시 40분도 표지에 넣어 주세요. 인쇄소에는 제가 11월 24일 정오 전까지 보내겠습니다.
